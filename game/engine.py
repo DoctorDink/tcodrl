@@ -5,6 +5,7 @@ import pickle
 
 import tcod
 
+import game.color
 import game.entity
 import game.exceptions
 import game.game_map
@@ -50,6 +51,25 @@ class Engine:
             current_value=self.player.fighter.hp,
             maximum_value=self.player.fighter.max_hp,
             total_width=20,
+            name="Hp:",
+            xPos=0,
+            yPos=45,
+            colorEmpty=game.color.hp_bar_empty,
+            colorFull=game.color.hp_bar_filled,
+            colorText=game.color.bar_text,
+        )
+
+        game.render_functions.render_bar(
+            console=console,
+            current_value=self.player.level.current_xp,
+            maximum_value=self.player.level.experience_to_next_level,
+            total_width=10,
+            name="Xp:",
+            xPos=0,
+            yPos=46,
+            colorEmpty=game.color.xp_bar_empty,
+            colorFull=game.color.xp_bar_filled,
+            colorText=game.color.bar_text,
         )
 
         game.render_functions.render_dungeon_level(

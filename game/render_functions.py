@@ -18,15 +18,19 @@ def get_names_at_location(x: int, y: int, game_map: game.game_map.GameMap) -> st
     return names.capitalize()
 
 
-def render_bar(console: tcod.console.Console, current_value: int, maximum_value: int, total_width: int) -> None:
+def render_bar(console: tcod.console.Console, 
+    current_value: int, maximum_value: int, total_width: int, 
+    name: str, xPos: int, yPos: int, 
+    colorEmpty: game.color, colorFull: game.color, colorText: game.color) -> None:
+
     bar_width = int(float(current_value) / maximum_value * total_width)
 
-    console.draw_rect(x=0, y=45, width=20, height=1, ch=1, bg=game.color.bar_empty)
+    console.draw_rect(x=xPos, y=yPos, width=20, height=1, ch=1, bg=colorEmpty) #0, 45
 
     if bar_width > 0:
-        console.draw_rect(x=0, y=45, width=bar_width, height=1, ch=1, bg=game.color.bar_filled)
+        console.draw_rect(x=xPos, y=yPos, width=bar_width, height=1, ch=1, bg=colorFull)
 
-    console.print(x=1, y=45, string=f"HP: {current_value}/{maximum_value}", fg=game.color.bar_text)
+    console.print(x=xPos, y=yPos, string=f"{name}: {current_value}/{maximum_value}", fg=colorText)
 
 
 def render_dungeon_level(console: tcod.console.Console, dungeon_level: int, location: Tuple[int, int]) -> None:
