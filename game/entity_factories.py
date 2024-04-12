@@ -44,6 +44,7 @@ confusion_scroll = Item(
     name="Confusion Scroll",
     consumable=consumable.ConfusionConsumable(number_of_turns=10),
     count=1,
+    stackable=True,
 )
 fireball_scroll = Item(
     char="~",
@@ -51,6 +52,7 @@ fireball_scroll = Item(
     name="Fireball Scroll",
     consumable=consumable.FireballDamageConsumable(damage=12, radius=3),
     count=1,
+    stackable=True,
 )
 health_potion = Item(
     char="!",
@@ -58,6 +60,7 @@ health_potion = Item(
     name="Health Potion",
     consumable=consumable.HealingConsumable(amount=4),
     count=1,
+    stackable=True,
 )
 lightning_scroll = Item(
     char="~",
@@ -65,17 +68,31 @@ lightning_scroll = Item(
     name="Lightning Scroll",
     consumable=consumable.LightningDamageConsumable(damage=20, maximum_range=5),
     count=1,
+    stackable=True,
 )
 
-dagger = Item(char="/", color=(0, 191, 255), name="Dagger", equippable=equippable.Dagger())
+dagger = Item(
+    char="/",
+    color=(0, 191, 255),
+    name="Dagger",
+    equippable=equippable.Dagger(),
+    stackable= False,
+    )
 
-sword = Item(char="/", color=(0, 191, 255), name="Sword", equippable=equippable.Sword())
+sword = Item(
+    char="/", 
+    color=(0, 191, 255), 
+    name="Sword", 
+    equippable=equippable.Sword(),
+    stackable= False,
+    )
 
 leather_armor = Item(
     char="[",
     color=(139, 69, 19),
     name="Leather Armor",
     equippable=equippable.LeatherArmor(),
+    stackable=False,
 )
 
 chain_mail = Item(char="[", color=(139, 69, 19), name="Chain Mail", equippable=equippable.ChainMail())

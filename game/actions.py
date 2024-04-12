@@ -54,7 +54,7 @@ class PickupAction(Action):
                 found = False
 
                 for id in inventory.items:
-                    if (id.name == item.name):
+                    if (id.name == item.name and item.stackable):
                         id.count += 1
                         found = True
 
