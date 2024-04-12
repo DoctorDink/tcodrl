@@ -17,7 +17,11 @@ class Inventory(BaseComponent):
         """
         Removes an item from the inventory and restores it to the game map, at the player's current location.
         """
-        self.items.remove(item)
-        item.place(self.parent.x, self.parent.y, self.gamemap)
+
+        item.count -= 1
+        item.spawn(self.gamemap, self.parent.x, self.parent.y)
+
+        if (item.count <= 0):
+            self.items.remove(item)
 
         self.engine.message_log.add_message(f"You dropped the {item.name}.")

@@ -50,7 +50,17 @@ class PickupAction(Action):
 
                 self.engine.game_map.entities.remove(item)
                 item.parent = self.entity.inventory
-                inventory.items.append(item)
+
+                found = False
+
+                for id in inventory.items:
+                    if (id.name == item.name):
+                        id.count += 1
+                        found = True
+
+                if(not found):
+                    item.count = 1
+                    inventory.items.append(item)
 
                 self.engine.message_log.add_message(f"You picked up the {item.name}!")
                 return
@@ -81,7 +91,6 @@ class DropItem(ItemAction):
     def perform(self) -> None:
         if self.entity.equipment.item_is_equipped(self.item):
             self.entity.equipment.toggle_equip(self.item)
-
         self.entity.inventory.drop(self.item)
 
 

@@ -138,6 +138,10 @@ class Item(Entity):
         name: str = "<Unnamed>",
         consumable: Optional[game.components.consumable.Consumable] = None,
         equippable: Optional[game.components.equippable.Equippable] = None,
+        value: float = 0,
+        weight: float = 0,
+        count: int = 1,
+        stackable: bool = True
     ):
         super().__init__(
             x=x,
@@ -158,3 +162,9 @@ class Item(Entity):
 
         if self.equippable:
             self.equippable.parent = self
+
+        self.value = 0
+        self.weight = 0
+        self.count = 1
+
+        self.stackable = stackable
