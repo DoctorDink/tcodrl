@@ -7,6 +7,7 @@ import math
 import game.components.ai
 import game.components.consumable
 import game.components.equipment
+import game.components.equippable
 import game.components.fighter
 import game.components.inventory
 import game.components.level
