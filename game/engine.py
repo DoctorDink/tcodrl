@@ -25,7 +25,7 @@ class Engine:
         self.player = player
         self.audio = game.audio.Audio()
         self.audio.load_sounds()
-        self.audio.play_music()
+        self.audio.play_music("data/scratch.wav")
 
     def handle_enemy_turns(self) -> None:
         for entity in set(self.game_map.actors) - {self.player}:

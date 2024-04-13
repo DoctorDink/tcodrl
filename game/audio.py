@@ -17,38 +17,40 @@ import game.render_functions
 class Audio:
     def __init__(self):
         self.mixer = tcod.sdl.audio.BasicMixer(tcod.sdl.audio.open())
-        self.channel = None
+        self.sfxChannel = None
+        self.musicChannel = None
         self.sample_rate = None
-        self.currSound = None
-        self.music = None
+        self.newSound = None
+        self.newMusic = None
+        self.music = []
         self.sound = []
 
     def load_sounds(self) -> None:
-        self.currSound, self.sample_rate = soundfile.read("data/death.wav")
-        self.currSound = self.mixer.device.convert(self.currSound, self.sample_rate)
-        self.sound.append(self.currSound)
+        self.newSound, self.sample_rate = soundfile.read("data/death.wav")
+        self.newSound = self.mixer.device.convert(self.newSound, self.sample_rate)
+        self.sound.append(self.newSound)
 
         self.music, self.sample_rate = soundfile.read("data/scratch.wav")
         self.music = self.mixer.device.convert(self.music, self.sample_rate)
         self.sound.append(self.music)
 
-        self.currSound, self.sample_rate = soundfile.read("data/orc.wav")
-        self.currSound = self.mixer.device.convert(self.currSound, self.sample_rate)
-        self.sound.append(self.currSound)
+        self.newSound, self.sample_rate = soundfile.read("data/orc.wav")
+        self.newSound = self.mixer.device.convert(self.newSound, self.sample_rate)
+        self.sound.append(self.newSound)
 
-        self.currSound, self.sample_rate = soundfile.read("data/sword_slash.wav")
-        self.currSound = self.mixer.device.convert(self.currSound, self.sample_rate)
-        self.sound.append(self.currSound)
+        self.newSound, self.sample_rate = soundfile.read("data/sword_slash.wav")
+        self.newSound = self.mixer.device.convert(self.newSound, self.sample_rate)
+        self.sound.append(self.newSound)
 
 
     def play_sfx(self, soundName: str) -> None:
         if(soundName == "orc_die"):
-            self.channel = self.mixer.play(self.sound[2])
+            self.sfxChannel = self.mixer.play(self.sound[2])
         elif(soundName == "sword_slash"):
-            self.channel = self.mixer.play(self.sound[3])
+            self.sfxChannel = self.mixer.play(self.sound[3])
         else:
-            self.channel = self.mixer.play(self.sound[0])
+            self.sfxChannel = self.mixer.play(self.sound[0])
 
-    def play_music(self) -> None:
-        self.channel = self.mixer.play(self.sound[1], volume=0.2, loops=-1)
+    def play_music(self, musicName: str) -> None:
+        self.musicChannel = self.mixer.play(self.sound[1], volume=0.2, loops=-1)
         pass
