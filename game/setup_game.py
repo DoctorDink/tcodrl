@@ -75,7 +75,6 @@ def load_game(filename: str) -> game.engine.Engine:
 
 class MainMenu(BaseEventHandler):
     """Handle the main menu rendering and input."""
-
     def on_render(self, console: tcod.console.Console) -> None:
         """Render the main menu on a background image."""
         console.draw_semigraphics(background_image, 0, 0)

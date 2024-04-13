@@ -50,9 +50,12 @@ class Fighter(BaseComponent):
 
     def die(self) -> None:
         if self.engine.player is self.parent:
+            self.engine.audio.play_sfx("player_die")
             death_message = "You died!"
             death_message_color = game.color.player_die
         else:
+            if(self.parent.name == "Orc"):
+                self.engine.audio.play_sfx("orc_die")
             death_message = f"{self.parent.name} is dead!"
             death_message_color = game.color.enemy_die
 
