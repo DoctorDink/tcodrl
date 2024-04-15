@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from game.components.base_component import BaseComponent
+import game.components.body
+from game.components.body import Body
 import game.color
 import game.entity
 import game.input_handlers
@@ -10,9 +12,9 @@ import game.render_order
 class Fighter(BaseComponent):
     parent: game.entity.Actor
 
-    def __init__(self, hp: int, base_defense: int, base_power: int):
-        self.max_hp = hp
-        self._hp = hp
+    def __init__(self, body: Body, base_defense: int, base_power: int):
+        self.max_hp = body.max_hp
+        self._hp = body.hp
         self.base_defense = base_defense
         self.base_power = base_power
 
@@ -63,7 +65,7 @@ class Fighter(BaseComponent):
         self.parent.color = (191, 0, 0)
         self.parent.blocks_movement = False
         self.parent.ai = None
-        self.parent.name = f"remains of {self.parent.name}"
+        self.parent.name = f"remains of {self.parent.name}" ##This must be updated to consider the body
         self.parent.render_order = game.render_order.RenderOrder.CORPSE
 
         self.engine.message_log.add_message(death_message, death_message_color)

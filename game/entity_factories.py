@@ -1,5 +1,6 @@
 from game.components import consumable, equippable
 from game.components.ai import HostileEnemy
+from game.components.body import Body, BodyPart
 from game.components.equipment import Equipment
 from game.components.fighter import Fighter
 from game.components.inventory import Inventory
