@@ -11,9 +11,10 @@ if TYPE_CHECKING:
 
 
 class Action:
-    def __init__(self, entity: game.entity.Actor) -> None:
+    def __init__(self, entity: game.entity.Actor, cooldown: int = 100) -> None:
         super().__init__()
         self.entity = entity
+        self.cooldown = cooldown
 
     @property
     def engine(self) -> game.engine.Engine:
@@ -63,6 +64,7 @@ class PickupAction(Action):
                     inventory.items.append(item)
 
                 self.engine.message_log.add_message(f"You picked up the {item.name}!")
+                self.entity.cooldown = self.cooldown
                 return
 
         raise game.exceptions.Impossible("There is nothing here to pick up.")
@@ -106,6 +108,7 @@ class EquipAction(Action):
 
 class WaitAction(Action):
     def perform(self) -> None:
+        self.entity.cooldown = self.cooldown
         pass
 
 
@@ -168,6 +171,8 @@ class MeleeAction(ActionWithDirection):
             target.fighter.hp -= damage
         else:
             self.engine.message_log.add_message(f"{attack_desc} but does no damage.", attack_color)
+        
+        self.entity.cooldown = self.cooldown
 
 
 class Move(ActionWithDirection):
@@ -185,6 +190,10 @@ class Move(ActionWithDirection):
             raise game.exceptions.Impossible("That way is blocked.")
 
         self.entity.move(self.dx, self.dy)
+        if self.entity.name == "Orc":
+            self.entity.cooldown = 150 
+        else:
+            self.entity.cooldown = self.cooldown
 
 
 class Bump(ActionWithDirection):

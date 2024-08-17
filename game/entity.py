@@ -93,6 +93,7 @@ class Actor(Entity):
         color: Tuple[int, int, int] = (255, 255, 255),
         name: str = "<Unnamed>",
         ai_cls: Type[game.components.ai.BaseAI],
+        cooldown: int = 0,
         equipment: game.components.equipment.Equipment,
         fighter: game.components.fighter.Fighter,
         inventory: game.components.inventory.Inventory,
@@ -109,6 +110,8 @@ class Actor(Entity):
         )
 
         self.ai: Optional[game.components.ai.BaseAI] = ai_cls(self)
+        
+        self.cooldown = cooldown
 
         self.equipment: game.components.equipment.Equipment = equipment
         self.equipment.parent = self
