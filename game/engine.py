@@ -98,19 +98,6 @@ class Engine:
             colorText=game.color.bar_text,
         )
 
-        game.render_functions.render_bar(
-            console=console,
-            current_value=self.player.stats.current_xp,
-            maximum_value=self.player.stats.experience_to_next_level,
-            total_width=10,
-            name="Xp:",
-            xPos=0,
-            yPos=46,
-            colorEmpty=game.color.xp_bar_empty,
-            colorFull=game.color.xp_bar_filled,
-            colorText=game.color.bar_text,
-        )
-
         game.render_functions.render_dungeon_level(
             console=console,
             dungeon_level=self.game_world.current_floor,

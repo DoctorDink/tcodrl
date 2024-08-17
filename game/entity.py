@@ -97,7 +97,6 @@ class Actor(Entity):
         equipment: game.components.equipment.Equipment,
         fighter: game.components.fighter.Fighter,
         inventory: game.components.inventory.Inventory,
-        stats: game.components.stats.Stats,
     ):
         super().__init__(
             x=x,
@@ -121,9 +120,6 @@ class Actor(Entity):
 
         self.inventory = inventory
         self.inventory.parent = self
-
-        self.stats = stats
-        self.stats.parent = self
 
     @property
     def is_alive(self) -> bool:

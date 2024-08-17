@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from game.components.base_component import BaseComponent
+from game.components.stats import Stats
 import game.color
 import game.entity
 import game.input_handlers
@@ -10,11 +11,10 @@ import game.render_order
 class Fighter(BaseComponent):
     parent: game.entity.Actor
 
-    def __init__(self, hp: int, base_defense: int, base_power: int):
-        self.max_hp = hp
-        self._hp = hp
-        self.base_defense = base_defense
-        self.base_power = base_power
+    def __init__(self, newStats: Stats):
+        self.stats = newStats
+        self.max_hp = self.calculate_max_health()
+        self._hp = self.max_hp
 
     @property
     def hp(self) -> int:
@@ -25,28 +25,6 @@ class Fighter(BaseComponent):
         self._hp = max(0, min(value, self.max_hp))
         if self._hp == 0 and self.parent.ai:
             self.die()
-
-    @property
-    def defense(self) -> int:
-        return self.base_defense + self.defense_bonus
-
-    @property
-    def power(self) -> int:
-        return self.base_power + self.power_bonus
-
-    @property
-    def defense_bonus(self) -> int:
-        if self.parent.equipment:
-            return self.parent.equipment.defense_bonus
-        else:
-            return 0
-
-    @property
-    def power_bonus(self) -> int:
-        if self.parent.equipment:
-            return self.parent.equipment.power_bonus
-        else:
-            return 0
 
     def die(self) -> None:
         if self.engine.player is self.parent:
@@ -68,8 +46,6 @@ class Fighter(BaseComponent):
 
         self.engine.message_log.add_message(death_message, death_message_color)
 
-        self.engine.player.stats.add_xp(self.parent.stats.xp_given)
-
     def heal(self, amount: int) -> int:
         if self.hp == self.max_hp:
             return 0
@@ -87,3 +63,9 @@ class Fighter(BaseComponent):
 
     def take_damage(self, amount: int) -> None:
         self.hp -= amount
+
+    def calculate_max_health(self) -> int:
+        return 10 + (self.stats.bulk * 2)
+    
+    def calculate_difficulty_class(self) -> int:
+        pass
