@@ -10,7 +10,7 @@ import game.components.equipment
 import game.components.equippable
 import game.components.fighter
 import game.components.inventory
-import game.components.level
+import game.components.stats
 import game.game_map
 import game.render_order
 
@@ -96,7 +96,7 @@ class Actor(Entity):
         equipment: game.components.equipment.Equipment,
         fighter: game.components.fighter.Fighter,
         inventory: game.components.inventory.Inventory,
-        level: game.components.level.Level,
+        stats: game.components.stats.Stats,
     ):
         super().__init__(
             x=x,
@@ -119,8 +119,8 @@ class Actor(Entity):
         self.inventory = inventory
         self.inventory.parent = self
 
-        self.level = level
-        self.level.parent = self
+        self.stats = stats
+        self.stats.parent = self
 
     @property
     def is_alive(self) -> bool:

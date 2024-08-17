@@ -110,7 +110,7 @@ class EventHandler(BaseEventHandler):
             if not self.engine.player.is_alive:
                 # The player was killed sometime during or after the action.
                 return GameOverEventHandler(self.engine)
-            elif self.engine.player.level.requires_level_up:
+            elif self.engine.player.stats.requires_level_up:
                 return LevelUpEventHandler(self.engine)
             return MainGameEventHandler(self.engine)  # Return to the main handler.
         return self
@@ -259,11 +259,11 @@ class LevelUpEventHandler(AskUserEventHandler):
 
         if 0 <= index <= 2:
             if index == 0:
-                player.level.increase_max_hp()
+                player.stats.increase_max_hp()
             elif index == 1:
-                player.level.increase_power()
+                player.stats.increase_power()
             else:
-                player.level.increase_defense()
+                player.stats.increase_defense()
         else:
             self.engine.message_log.add_message("Invalid entry.", game.color.invalid)
 
