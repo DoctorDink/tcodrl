@@ -27,6 +27,13 @@ class Engine:
         self.audio.load_sounds()
         self.audio.play_music("data/scratch.wav")
 
+    def review_hostile_enemies(self) -> None:
+        for entity in set(self.game_map.actors) - {self.player}:
+            if entity.ai.isHostile:
+                return True
+        return False
+                
+
     def handle_enemy_turns(self) -> None:
         for entity in set(self.game_map.actors) - {self.player}:
             if entity.ai:

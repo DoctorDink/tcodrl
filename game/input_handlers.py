@@ -39,6 +39,10 @@ WAIT_KEYS = {
     tcod.event.KeySym.CLEAR,
 }
 
+HEAL_KEYS = {
+    tcod.event.KeySym.BACKQUOTE,
+}
+
 CONFIRM_KEYS = {
     tcod.event.KeySym.RETURN,
     tcod.event.KeySym.KP_ENTER,
@@ -112,7 +116,7 @@ class EventHandler(BaseEventHandler):
                 return GameOverEventHandler(self.engine)
             elif self.engine.player.stats.requires_level_up:
                 return LevelUpEventHandler(self.engine)
-            return MainGameEventHandler(self.engine)  # Return to the main handler.
+            return MainGameEventHandler(self.engine)  # Return to the main handler. DEFAULT CASE
         return self
 
     def handle_action(self, action: Optional[game.actions.Action]) -> bool:
@@ -141,6 +145,22 @@ class EventHandler(BaseEventHandler):
     def on_render(self, console: tcod.Console) -> None:
         self.engine.render(console)
 
+class WaitHealEventHandler(EventHandler):
+    """Handles user input for waiting to heal"""
+
+    def __init__(self, engine: game.engine.Engine):
+        self.engine = engine
+
+    def wait_to_heal(self):
+        while (self.engine.player.fighter.hp < self.engine.player.fighter.max_hp):
+            if (self.engine.review_hostile_enemies()):
+                self.engine.message_log.add_message("Sleep aborted, hostile enemies detected.", game.color.needs_target)
+                return MainGameEventHandler(self.engine)
+            self.engine.player.fighter.hp += 1
+            self.engine.handle_enemy_turns()
+        return MainGameEventHandler(self.engine)
+
+        #console.print(x=x + 1, y=y + 1, string=f"Level: {self.engine.player.level.current_level}")
 
 class AskUserEventHandler(EventHandler):
     """Handles user input for actions which require special input."""
@@ -504,6 +524,8 @@ class MainGameEventHandler(EventHandler):
             action = game.actions.Bump(player, dx, dy)
         elif key in WAIT_KEYS:
             action = game.actions.WaitAction(player)
+        elif key in HEAL_KEYS:
+            return WaitHealEventHandler(self.engine).wait_to_heal()
 
         elif key == tcod.event.KeySym.ESCAPE:
             raise SystemExit()
