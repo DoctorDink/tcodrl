@@ -65,8 +65,8 @@ class Engine:
 
         game.render_functions.render_bar(
             console=console,
-            current_value=self.player.level.current_xp,
-            maximum_value=self.player.level.experience_to_next_level,
+            current_value=self.player.stats.current_xp,
+            maximum_value=self.player.stats.experience_to_next_level,
             total_width=10,
             name="Xp:",
             xPos=0,

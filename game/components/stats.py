@@ -4,23 +4,31 @@ from game.components.base_component import BaseComponent
 import game.entity
 
 
-class Level(BaseComponent):
+class Stats(BaseComponent):
     parent: game.entity.Actor
 
     def __init__(
         self,
+        bulk: int = 1,
+        shielding: int = 1,
+        processing: int = 1,
+        coordination: int = 1,
         current_level: int = 1,
         current_xp: int = 0,
         level_up_base: int = 0,
         level_up_factor: int = 150,
         xp_given: int = 0,
     ):
+        self.bulk = bulk
+        self.shielding = shielding
+        self.processing = processing
+        self.coordination = coordination
         self.current_level = current_level
         self.current_xp = current_xp
         self.level_up_base = level_up_base
         self.level_up_factor = level_up_factor
         self.xp_given = xp_given
-
+    
     @property
     def experience_to_next_level(self) -> int:
         return self.level_up_base + self.current_level * self.level_up_factor
