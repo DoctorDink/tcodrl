@@ -18,3 +18,6 @@ class Stats(BaseComponent):
         self.shielding = shielding
         self.processing = processing
         self.coordination = coordination
+
+
+
