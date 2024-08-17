@@ -12,6 +12,7 @@ import game.entity
 
 
 class BaseAI(Action):
+    isHostile = 0 # Enemies are set to hostile when they are revealed on the map, potentially update to A* pathfinding for LOS.
     def perform(self) -> None:
         raise NotImplementedError()
 
@@ -57,6 +58,7 @@ class HostileEnemy(BaseAI):
         distance = max(abs(dx), abs(dy))  # Chebyshev distance.
 
         if self.engine.game_map.visible[self.entity.x, self.entity.y]:
+            self.isHostile = 1
             if distance <= 1:
                 return game.actions.MeleeAction(self.entity, dx, dy).perform()
 
