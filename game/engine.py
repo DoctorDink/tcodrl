@@ -27,13 +27,42 @@ class Engine:
         self.audio.load_sounds()
         self.audio.play_music("data/scratch.wav")
 
+    def lower_cooldowns(self, amount: int):
+        for entity in self.game_map.actors:
+            entity.cooldown -= amount
+        self.player.cooldown -= amount
+
+    def get_next_actor_group(self) -> game.entity.Actor:
+        all_actors = sorted(set(self.game_map.actors), key=lambda Actor: Actor.cooldown)
+        lowest_cooldown = all_actors[0].cooldown
+        return  (set(actor for actor in all_actors if actor.cooldown == lowest_cooldown and actor.is_alive), lowest_cooldown)
+
+
+
     def handle_enemy_turns(self) -> None:
-        for entity in set(self.game_map.actors) - {self.player}:
-            if entity.ai:
-                try:
-                    entity.ai.perform()
-                except game.exceptions.Impossible:
-                    pass  # Ignore impossible action exceptions from AI.
+        print("---------------------------------------")
+        all_actors = sorted(set(self.game_map.actors), key=lambda Actor: Actor.cooldown)
+        
+        next_group: set[game.entity.Actor]
+        next_cooldown: int
+        next_group, next_cooldown = self.get_next_actor_group()
+        i = 1
+        while not (self.player in next_group):
+
+            print(i)
+            for x in all_actors:
+                print(f"{x.name}: {x.cooldown}")
+            i+=1 
+            for actor in next_group:
+                if actor.ai:
+                    try:
+                        actor.ai.perform()
+                    except game.exceptions.Impossible:
+                        pass  # Ignore impossible action exceptions from AI
+            self.lower_cooldowns(next_cooldown)
+            next_group, next_cooldown = self.get_next_actor_group()
+
+        self.lower_cooldowns(self.player.cooldown)
 
     def update_fov(self) -> None:
         """Recompute the visible area based on the players point of view."""
