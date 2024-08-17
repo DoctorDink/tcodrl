@@ -26,7 +26,7 @@ class Engine:
         self.audio = game.audio.Audio()
         self.audio.load_sounds()
         self.audio.play_music("data/scratch.wav")
-
+        
     def lower_cooldowns(self, amount: int):
         for entity in self.game_map.actors:
             entity.cooldown -= amount
@@ -38,6 +38,12 @@ class Engine:
         return  (set(actor for actor in all_actors if actor.cooldown == lowest_cooldown and actor.is_alive), lowest_cooldown)
 
 
+    def review_hostile_enemies(self) -> None:
+        for entity in set(self.game_map.actors) - {self.player}:
+            if entity.ai.isHostile:
+                return True
+        return False
+          
 
     def handle_enemy_turns(self) -> None:
         print("---------------------------------------")
