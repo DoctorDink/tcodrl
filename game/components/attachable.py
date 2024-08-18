@@ -29,3 +29,4 @@ class Attachable(BaseComponent):
         self.max_hp = max_hp
         self.sockets = sockets
         
+

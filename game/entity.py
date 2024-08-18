@@ -11,6 +11,7 @@ import game.components.equippable
 import game.components.fighter
 import game.components.inventory
 import game.components.stats
+import game.components.attachable
 import game.game_map
 import game.render_order
 
@@ -138,6 +139,7 @@ class Item(Entity):
         name: str = "<Unnamed>",
         consumable: Optional[game.components.consumable.Consumable] = None,
         equippable: Optional[game.components.equippable.Equippable] = None,
+        attachable: Optional[game.components.attachable.Attachable] = None,
         value: float = 0,
         weight: float = 0,
         count: int = 1,
@@ -162,6 +164,10 @@ class Item(Entity):
 
         if self.equippable:
             self.equippable.parent = self
+
+        if self.attachable:
+            self.attachable.parent = self
+
 
         self.value = 0
         self.weight = 0
