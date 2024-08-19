@@ -168,6 +168,8 @@ class Item(Entity):
         if self.equippable:
             self.equippable.parent = self
 
+        self.attachable = attachable
+        
         if self.attachable:
             self.attachable.parent = self
 

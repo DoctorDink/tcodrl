@@ -11,7 +11,7 @@ import game.entity
 class Attachments(BaseComponent):
     parent: game.entity.Actor
 
-    def __init__(self, chassis: Optional[Attachable] = None):
+    def __init__(self, chassis: Optional[game.entity.Item] = None):
         self.chassis_socket = Socket(AttachmentType.CHASSIS, chassis)
 
 
