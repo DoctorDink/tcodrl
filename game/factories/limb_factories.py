@@ -18,7 +18,7 @@ basic_chassis = Item(
     char="H",
     color=(100, 100, 100),
     name="Basic Chassis",
-    attachable=Attachable(AttachmentType.CHASSIS, hp = 10, max_hp = 10, sockets = [Socket(AttachmentType.JOINT), Socket(AttachmentType.JOINT), Socket(AttachmentType.JOINT), Socket(AttachmentType.JOINT)], effects=basic_chassis_effect),
+    attachable=Attachable(AttachmentType.CHASSIS, hp = 10, max_hp = 10, sockets = [Socket(AttachmentType.JOINT), Socket(AttachmentType.JOINT), Socket(AttachmentType.JOINT), Socket(AttachmentType.JOINT)], effects=[basic_chassis_effect]),
     count=1,
     stackable=False,
 )

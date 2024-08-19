@@ -33,11 +33,11 @@ class Fighter(base_component.BaseComponent):
             if stat == game.stat_types.StatType.BULK:
                 stats_after_effects.bulk += self.parent.effect_handler.current_stat_changes[stat]
             if stat == game.stat_types.StatType.COORDINATION:
-                stats_after_effects.bulk += self.parent.effect_handler.current_stat_changes[stat]
+                stats_after_effects.coordination += self.parent.effect_handler.current_stat_changes[stat]
             if stat == game.stat_types.StatType.SHIELDING:
-                stats_after_effects.bulk += self.parent.effect_handler.current_stat_changes[stat]
+                stats_after_effects.shielding += self.parent.effect_handler.current_stat_changes[stat]
             if stat == game.stat_types.StatType.PROCESSING:
-                stats_after_effects.bulk += self.parent.effect_handler.current_stat_changes[stat]
+                stats_after_effects.processing += self.parent.effect_handler.current_stat_changes[stat]
 
         return stats_after_effects
             

@@ -40,7 +40,7 @@ class EffectHandler(base_component.BaseComponent):
                 self.effects[effect_index].stacks -= stacks
 
 
-    def activate_all(self, action: game.actions.Action) -> None:
+    def activate_all(self, action: Optional[game.actions.Action] = None) -> None:
         stat_changes: dict[game.stat_types.StatType, int] = {}
         to_remove = []
         for effect in self.effects:
@@ -50,7 +50,7 @@ class EffectHandler(base_component.BaseComponent):
                 if not result:
                     to_remove.append(effect)
             
-            if isinstance(result, dict[game.stat_types.StatType, int]):
+            if isinstance(result, dict):
                 for stat in result:
                     if stat in stat_changes:
                         stat_changes[stat] = stat_changes[stat] + result[stat]

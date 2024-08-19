@@ -13,7 +13,7 @@ class Effect(base_component.BaseComponent):
             self,
             name,
             description,
-            effect: Callable[[game.actions.Action], Union[dict[game.stat_types.StatType, int], bool]],
+            effect: Callable[[Optional[game.actions.Action]], Union[dict[game.stat_types.StatType, int], bool]],
             stacks: int = 1,
             stackable: bool = False, 
             ): 

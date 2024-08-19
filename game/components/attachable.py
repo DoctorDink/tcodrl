@@ -43,6 +43,8 @@ class Socket(base_component.BaseComponent):
         for socket in self.attachment.attachable.sockets:
             all_effects = socket.get_all_effects(all_effects)
 
+        return all_effects
+
 
 class Attachable(game.components.base_component.BaseComponent):
     parent: game.entity.Item
