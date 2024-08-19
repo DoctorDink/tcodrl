@@ -3,16 +3,16 @@ from __future__ import annotations
 
 from typing import Optional
 
-from game.components.base_component import BaseComponent
-from game.attachment_types import AttachmentType
+import game.components.base_component as base_component
+import game.attachment_types  as attachment_types
+import game.components.effect as effect
 import game.entity
-import game.components.effect
 import game.exceptions
 
-class Socket(BaseComponent):
+class Socket(base_component.BaseComponent):
     parent: Attachable 
 
-    def __init__(self, type: AttachmentType, attachment: Optional[game.entity.Item]) -> None:
+    def __init__(self, type: attachment_types.AttachmentType, attachment: Optional[game.entity.Item]) -> None:
         self.type = type
         self.attachment = attachment
 
@@ -35,16 +35,16 @@ class Socket(BaseComponent):
         return attachment_temp
 
 
-class Attachable(BaseComponent):
+class Attachable(game.components.base_component.BaseComponent):
     parent: game.entity.Item
 
     def __init__(
             self,
-            type: AttachmentType,
+            type: attachment_types.AttachmentType,
             hp: int = 1,
             max_hp: int = 1,
             sockets: list[Socket] = [],
-            effects: list[game.components.effect.Effect] = []
+            effects: list[effect.Effect] = []
             ) -> None:
 
         self.type = type

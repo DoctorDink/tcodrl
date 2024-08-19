@@ -1,17 +1,17 @@
 from __future__ import annotations
 
-from game.components.base_component import BaseComponent
-from game.components.stats import Stats
+import game.components.base_component as base_component
+import game.components.stats as stats
 import game.color
 import game.entity
 import game.input_handlers
 import game.render_order
 
 
-class Fighter(BaseComponent):
+class Fighter(base_component.BaseComponent):
     parent: game.entity.Actor
 
-    def __init__(self, newStats: Stats):
+    def __init__(self, newStats: stats.Stats):
         self.stats = newStats
         self.max_hp = self.calculate_max_health()
         self._hp = self.max_hp

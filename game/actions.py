@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional, Tuple
 
 import game.color
-from game.entity import Actor
+import game.entity
 import game.exceptions
 
 if TYPE_CHECKING:
@@ -124,7 +124,7 @@ class WaitAction(Action):
 
 
 class TakeStairsAction(Action):
-    def __init__(self, entity: Actor, cooldown: int = 100) -> None:
+    def __init__(self, entity: game.entity.Actor, cooldown: int = 100) -> None:
         super().__init__(entity, cooldown)
 
     def perform(self) -> None:

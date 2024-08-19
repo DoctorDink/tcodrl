@@ -11,7 +11,7 @@ from PIL import Image  # type: ignore
 import tcod
 from tcod import libtcodpy
 
-from game.input_handlers import BaseEventHandler
+import game.input_handlers
 import game.color
 import game.engine
 import game.entity_factories
@@ -73,7 +73,7 @@ def load_game(filename: str) -> game.engine.Engine:
     return engine
 
 
-class MainMenu(BaseEventHandler):
+class MainMenu(game.input_handlers.BaseEventHandler):
     """Handle the main menu rendering and input."""
     def on_render(self, console: tcod.console.Console) -> None:
         """Render the main menu on a background image."""

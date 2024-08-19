@@ -1,18 +1,19 @@
 from typing import Optional, Union, Callable
 
-from game.components.base_component import BaseComponent
-from game.actions import Action
-from game.stat_types import StatType
-from game.components.effect_handler import EffectHandler
+import game.components.base_component as base_component
+import game.components.effect_handler as effect_handler
+import game.actions 
+import game.stat_types 
 
-class Effect(BaseComponent):
-    parent: EffectHandler
+
+class Effect(base_component.BaseComponent):
+    parent: effect_handler.EffectHandler
 
     def __init__(
             self,
             name,
             description,
-            effect: Callable[[Action], Union[dict[StatType, int], bool]],
+            effect: Callable[[game.actions.Action], Union[dict[game.stat_types.StatType, int], bool]],
             stacks: int = 1,
             stackable: bool = False, 
             ): 
@@ -23,5 +24,5 @@ class Effect(BaseComponent):
         self.stacks = stacks
         self.stackable = stackable
 
-    def activate(self, action) -> Union[dict[StatType, int], bool]:
+    def activate(self, action) -> Union[dict[game.stat_types.StatType, int], bool]:
         return self._effect(action)

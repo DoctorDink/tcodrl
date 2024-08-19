@@ -6,11 +6,13 @@ import random
 import numpy as np
 import tcod
 
-from game.actions import Action
+import game.actions
 import game.entity
 
+import importlib
+actions = importlib.import_module("game.actions")
 
-class BaseAI(Action):
+class BaseAI(game.actions.Action):
     isHostile = 0 # Enemies are set to hostile when they are revealed on the map, potentially update to A* pathfinding for LOS.
     def perform(self) -> None:
         raise NotImplementedError()

@@ -1,20 +1,20 @@
 from typing import Optional, Union, Callable
 
 import game.actions
-from game.components.base_component import BaseComponent
-from game.components.effect import Effect
+import game.components.base_component as base_component
+import game.components.effect as effect
 
-from game.entity import Entity
+import game.entity
 import game.exceptions
 import game.stat_types
 
-class EffectHandler(BaseComponent):
-    parent: Entity
+class EffectHandler(base_component.BaseComponent):
+    parent: game.Entity
 
     def __init__(self) -> None:
-        self.effects: list[Effect] = []
+        self.effects: list[effect.Effect] = []
 
-    def add_effect(self, new_effect: Effect, stacks = 1) -> None:
+    def add_effect(self, new_effect: effect.Effect, stacks = 1) -> None:
         for effect in self.effects:
             if effect.name == new_effect.name:
                 if effect.stackable:

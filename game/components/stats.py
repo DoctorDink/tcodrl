@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from game.components.base_component import BaseComponent
+import game.components.base_component as base_component
 import game.entity
 
 
-class Stats(BaseComponent):
+class Stats(base_component.BaseComponent):
     parent: game.entity.Actor
 
     def __init__(

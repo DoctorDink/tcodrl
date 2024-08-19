@@ -2,12 +2,12 @@ from __future__ import annotations
 
 from typing import Optional
 
-from game.equipment_types import EquipmentType
-from game.components.base_component import BaseComponent
+import game.components.base_component as base_component
+import game.equipment_types 
 import game.entity
 
 
-class Equipment(BaseComponent):
+class Equipment(base_component.BaseComponent):
     parent: game.entity.Actor
 
     def __init__(self, weapon: Optional[game.entity.Item] = None, armor: Optional[game.entity.Item] = None):
@@ -67,7 +67,7 @@ class Equipment(BaseComponent):
         setattr(self, slot, None)
 
     def toggle_equip(self, equippable_item: game.entity.Item, add_message: bool = True) -> None:
-        if equippable_item.equippable and equippable_item.equippable.equipment_type == EquipmentType.WEAPON:
+        if equippable_item.equippable and equippable_item.equippable.equipment_type == game.equipment_types.EquipmentType.WEAPON:
             slot = "weapon"
         else:
             slot = "armor"

@@ -2,17 +2,16 @@ from __future__ import annotations
 
 from typing import Optional
 
-from game.components.base_component import BaseComponent
-from game.components.attachable import Socket, Attachable
-from game.attachment_types import AttachmentType
+import game.components.attachable
+import game.attachment_types
 import game.entity
 
 
-class Attachments(BaseComponent):
+class Attachments(game.components.base_component.BaseComponent):
     parent: game.entity.Actor
 
     def __init__(self, chassis: Optional[game.entity.Item] = None):
-        self.chassis_socket = Socket(AttachmentType.CHASSIS, chassis)
+        self.chassis_socket = game.components.attachable.Attachable(game.attachment_types.AttachmentType.CHASSIS, chassis)
 
     def get_sockets(self) -> list[Socket]:
         #DFS

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Optional
 
-from game.components.base_component import BaseComponent
+import game.components.base_component as base_component
 import game.actions
 import game.color
 import game.components.ai
@@ -12,7 +12,7 @@ import game.exceptions
 import game.input_handlers
 
 
-class Consumable(BaseComponent):
+class Consumable(base_component.BaseComponent):
     parent: game.entity.Item
 
     def __init__(self, consume_time: int) -> None:
