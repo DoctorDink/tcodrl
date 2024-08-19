@@ -12,7 +12,7 @@ player = Actor(
     name="Player",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
-    fighter=Fighter(Stats(40, 10, 10, 10)),
+    fighter=Fighter(Stats(100, 10, 10, 10)),
     inventory=Inventory(capacity=26),
 )
 

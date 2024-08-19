@@ -3,7 +3,7 @@ from __future__ import annotations
 import game.components.base_component as base_component
 import game.entity
 
-
+#TODO: Convert stats class to use a map for stats
 class Stats(base_component.BaseComponent):
     parent: game.entity.Actor
 

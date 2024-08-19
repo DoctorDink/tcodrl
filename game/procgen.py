@@ -7,7 +7,8 @@ import tcod
 
 import game.engine
 import game.entity
-import game.entity_factories
+import game.factories.entity_factories
+import game.factories.limb_factories
 import game.game_map
 import game.tiles
 
@@ -23,17 +24,17 @@ max_monsters_by_floor = [
 ]
 
 item_chances: Dict[int, List[Tuple[game.entity.Entity, int]]] = {
-    0: [(game.entity_factories.health_potion, 35)],
-    2: [(game.entity_factories.confusion_scroll, 10)],
-    4: [(game.entity_factories.lightning_scroll, 25), (game.entity_factories.sword, 5)],
-    6: [(game.entity_factories.fireball_scroll, 25), (game.entity_factories.chain_mail, 15)],
+    0: [(game.factories.entity_factories.health_potion, 35), (game.factories.limb_factories.basic_chassis, 5)],
+    2: [(game.factories.entity_factories.confusion_scroll, 10)],
+    4: [(game.factories.entity_factories.lightning_scroll, 25), (game.factories.entity_factories.sword, 5)],
+    6: [(game.factories.entity_factories.fireball_scroll, 25), (game.factories.entity_factories.chain_mail, 15)],
 }
 
 enemy_chances: Dict[int, List[Tuple[game.entity.Entity, int]]] = {
-    0: [(game.entity_factories.orc, 80)],
-    3: [(game.entity_factories.troll, 15)],
-    5: [(game.entity_factories.troll, 30)],
-    7: [(game.entity_factories.troll, 60)],
+    0: [(game.factories.entity_factories.orc, 80)],
+    3: [(game.factories.entity_factories.troll, 15)],
+    5: [(game.factories.entity_factories.troll, 30)],
+    7: [(game.factories.entity_factories.troll, 60)],
 }
 
 

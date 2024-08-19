@@ -8,11 +8,12 @@ import game.attachment_types  as attachment_types
 import game.components.effect as effect
 import game.entity
 import game.exceptions
+import game.components.effect
 
 class Socket(base_component.BaseComponent):
     parent: Attachable 
 
-    def __init__(self, type: attachment_types.AttachmentType, attachment: Optional[game.entity.Item]) -> None:
+    def __init__(self, type: attachment_types.AttachmentType, attachment: Optional[game.entity.Item] = None) -> None:
         self.type = type
         self.attachment = attachment
 
@@ -33,6 +34,14 @@ class Socket(base_component.BaseComponent):
         attachment_temp = self.attachment
         self.attachment = None
         return attachment_temp
+    
+    def get_all_effects(self, others = []) -> list[game.components.effect.Effect]:
+        if not self.attachment:
+            return others
+        
+        all_effects =  others + self.attachment.attachable.effects
+        for socket in self.attachment.attachable.sockets:
+            all_effects = socket.get_all_effects(all_effects)
 
 
 class Attachable(game.components.base_component.BaseComponent):
@@ -69,3 +78,7 @@ class Attachable(game.components.base_component.BaseComponent):
             raise game.exceptions.Impossible("That is not a valid spot!")
         
         return self.sockets[socket_index].detach()
+    
+    
+
+

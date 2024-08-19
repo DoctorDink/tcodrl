@@ -14,7 +14,7 @@ from tcod import libtcodpy
 import game.input_handlers
 import game.color
 import game.engine
-import game.entity_factories
+import game.factories.entity_factories
 import game.game_map
 import game.input_handlers
 import game.procgen
@@ -32,7 +32,7 @@ def new_game() -> game.engine.Engine:
     room_min_size = 6
     max_rooms = 30
 
-    player = copy.deepcopy(game.entity_factories.player)
+    player = copy.deepcopy(game.factories.entity_factories.player)
 
     engine = game.engine.Engine(player=player)
 
@@ -50,8 +50,8 @@ def new_game() -> game.engine.Engine:
 
     engine.message_log.add_message("Hello and welcome, adventurer, to yet another dungeon!", game.color.welcome_text)
 
-    dagger = copy.deepcopy(game.entity_factories.dagger)
-    leather_armor = copy.deepcopy(game.entity_factories.leather_armor)
+    dagger = copy.deepcopy(game.factories.entity_factories.dagger)
+    leather_armor = copy.deepcopy(game.factories.entity_factories.leather_armor)
 
     dagger.parent = player.inventory
     leather_armor.parent = player.inventory
