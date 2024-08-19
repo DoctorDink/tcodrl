@@ -6,6 +6,9 @@ import os
 import tcod
 import libtcodpy
 
+import game.components
+import game.components.attachable
+
 if TYPE_CHECKING:
     import game.actions
 
@@ -226,6 +229,103 @@ class CharacterScreenEventHandler(AskUserEventHandler):
         console.print(x=x + 1, y=y + 4, string=f"Processing: {self.engine.player.fighter.stats.processing}")
         console.print(x=x + 1, y=y + 5, string=f"Coordination: {self.engine.player.fighter.stats.coordination}")
 
+class AttachmentEventHandler(AskUserEventHandler):
+    """This handler lets the user select an item.
+
+    What happens then depends on the subclass.
+    """
+
+    TITLE = "<missing title>"
+
+    def on_render(self, console: tcod.console.Console) -> None:
+        """Render an inventory menu, which displays the items in the inventory, and the letter to select them.
+        Will move to a different position based on where the player is located, so the player can always see where
+        they are.
+        """
+        super().on_render(console)
+        number_of_total_sockets = len(self.engine.player.attachments.get_sockets())
+
+        height = 36
+
+        width = 60
+
+        console.draw_frame(
+            x=3,
+            y=3,
+            width=width,
+            height=height,
+            clear=True,
+            fg=(255, 255, 255),
+            bg=(0, 0, 0),
+        )
+        console.print(1, 1, f" {self.TITLE} ", fg=(0, 0, 0), bg=(255, 255, 255))
+
+        if number_of_total_sockets > 0:
+            previousSocket : game.components.attachable.Socket
+            previousSocket = self.engine.player.attachments.get_sockets()[0]
+            socketDepth = 0
+            for i, socket in enumerate(self.engine.player.attachments.get_sockets()):
+                socket_key = chr(ord("a") + i)
+                #is_equipped = self.engine.player.equipment.item_is_equipped(item)
+
+                #If parent same as previous, same tab level, if different parent
+                #if current parent == last Socket, Tab further
+                #ELSE, one less tab
+
+                if(socket.parent == previousSocket.parent):
+                    #socket depth the same
+                    pass
+                elif(socket.parent == previousSocket.attachment):
+                    socketDepth += 1
+                else:
+                    socketDepth -= 1
+
+                if (socket.attachment == None):
+                    item_string = f"({socket_key}) Empty Socket"
+                else: 
+                    item_string = f"({socket_key}) {"   "* socketDepth}{socket.attachment.name} (E)"
+                console.print(1 + 1,1 + i + 1, item_string)
+'''
+    Chassis
+    EMPTY
+    EMPTY
+    EMPTY
+    EMPTY should be tabbed in
+
+    def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:
+        player = self.engine.player
+        key = event.sym
+        index = key - tcod.event.KeySym.a
+
+        if 0 <= index <= 26:
+            try:
+                selected_item = player.inventory.items[index]
+            except IndexError:
+                self.engine.message_log.add_message("Invalid entry.", game.color.invalid)
+                return None
+            return self.on_item_selected(selected_item)
+        return super().ev_keydown(event)
+
+    def on_item_selected(self, item: game.entity.Item) -> Optional[ActionOrHandler]:
+        """Called when the user selects a valid item."""
+        raise NotImplementedError()
+'''
+
+'''E
+class AttachmentActivateHandler(InventoryEventHandler):
+    """Handle using an inventory item."""
+
+    TITLE = "Select an item to use"
+
+    def on_item_selected(self, item: game.entity.Item) -> Optional[ActionOrHandler]:
+        if item.consumable:
+            # Return the action for the selected item.
+            return item.consumable.get_action(self.engine.player)
+        elif item.equippable:
+            return game.actions.EquipAction(self.engine.player, item)
+        else:
+            return None
+'''
 
 
 class InventoryEventHandler(AskUserEventHandler):
@@ -451,7 +551,8 @@ class MainGameEventHandler(EventHandler):
             raise SystemExit()
         elif key == tcod.event.KeySym.v:
             return HistoryViewer(self.engine)
-
+        elif key == tcod.event.KeySym.e:
+            return AttachmentEventHandler(self.engine)
         elif key == tcod.event.KeySym.g:
             action = game.actions.PickupAction(player)
 
