@@ -22,7 +22,7 @@ class Attachments(game.components.base_component.BaseComponent):
             current_socket = sockets_to_visit.pop(0)
             sockets.append(current_socket)
             if current_socket.attachment:
-                for child_socket in current_socket.attachment.attachable.sockets.reverse():
+                for child_socket in reversed(current_socket.attachment.attachable.sockets):
                     sockets_to_visit.insert(0, child_socket)
 
         return sockets
