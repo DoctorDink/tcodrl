@@ -15,11 +15,14 @@ import game.input_handlers
 class Consumable(BaseComponent):
     parent: game.entity.Item
 
+    def __init__(self, consume_time: int) -> None:
+        self.consume_time = consume_time
+        
     def get_action(self, consumer: game.entity.Actor) -> Optional[game.input_handlers.ActionOrHandler]:
         """Try to return the action for this item."""
         return game.actions.ItemAction(consumer, self.parent)
 
-    def activate(self, action: game.actions.ItemAction) -> None:
+    def activate(self, action: game.actions.ItemAction) -> int:
         """Invoke this items ability.
 
         `action` is the context for this activation.
@@ -35,9 +38,9 @@ class Consumable(BaseComponent):
             if (entity.count <= 0):
                 inventory.items.remove(entity)
 
-
 class ConfusionConsumable(Consumable):
-    def __init__(self, number_of_turns: int):
+    def __init__(self, consume_time, number_of_turns: int):
+        super().__init__(consume_time)
         self.number_of_turns = number_of_turns
 
     def get_action(self, consumer: game.entity.Actor) -> game.input_handlers.SingleRangedAttackHandler:
@@ -47,7 +50,7 @@ class ConfusionConsumable(Consumable):
             callback=lambda xy: game.actions.ItemAction(consumer, self.parent, xy),
         )
 
-    def activate(self, action: game.actions.ItemAction) -> None:
+    def activate(self, action: game.actions.ItemAction) -> int:
         consumer = action.entity
         target = action.target_actor
 
@@ -68,10 +71,12 @@ class ConfusionConsumable(Consumable):
             turns_remaining=self.number_of_turns,
         )
         self.consume()
+        return self.consume_time
 
 
 class FireballDamageConsumable(Consumable):
-    def __init__(self, damage: int, radius: int):
+    def __init__(self, consume_time, damage: int, radius: int):
+        super().__init__(consume_time)
         self.damage = damage
         self.radius = radius
 
@@ -83,7 +88,7 @@ class FireballDamageConsumable(Consumable):
             callback=lambda xy: game.actions.ItemAction(consumer, self.parent, xy),
         )
 
-    def activate(self, action: game.actions.ItemAction) -> None:
+    def activate(self, action: game.actions.ItemAction) -> int:
         target_xy = action.target_xy
 
         if not self.engine.game_map.visible[target_xy]:
@@ -101,13 +106,15 @@ class FireballDamageConsumable(Consumable):
         if not targets_hit:
             raise game.exceptions.Impossible("There are no targets in the radius.")
         self.consume()
+        return self.consume_time
 
 
 class HealingConsumable(Consumable):
-    def __init__(self, amount: int):
+    def __init__(self, consume_time, amount: int):
+        super().__init__(consume_time)
         self.amount = amount
 
-    def activate(self, action: game.actions.ItemAction) -> None:
+    def activate(self, action: game.actions.ItemAction) -> int:
         consumer = action.entity
         amount_recovered = consumer.fighter.heal(self.amount)
 
@@ -117,16 +124,18 @@ class HealingConsumable(Consumable):
                 game.color.health_recovered,
             )
             self.consume()
+            return self.consume_time
         else:
             raise game.exceptions.Impossible("Your health is already full.")
 
 
 class LightningDamageConsumable(Consumable):
-    def __init__(self, damage: int, maximum_range: int):
+    def __init__(self, consume_time, damage: int, maximum_range: int):
+        super().__init__(consume_time)
         self.damage = damage
         self.maximum_range = maximum_range
 
-    def activate(self, action: game.actions.ItemAction) -> None:
+    def activate(self, action: game.actions.ItemAction) -> int:
         consumer = action.entity
         target = None
         closest_distance = self.maximum_range + 1.0
@@ -145,5 +154,6 @@ class LightningDamageConsumable(Consumable):
             )
             target.fighter.take_damage(self.damage)
             self.consume()
+            return self.consume_time
         else:
             raise game.exceptions.Impossible("No enemy is close enough to strike.")
