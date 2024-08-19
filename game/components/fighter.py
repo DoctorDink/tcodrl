@@ -1,17 +1,17 @@
 from __future__ import annotations
 
-from game.components.base_component import BaseComponent
-from game.components.stats import Stats
+import game.components.base_component as base_component
+import game.components.stats as stats
 import game.color
 import game.entity
 import game.input_handlers
 import game.render_order
 
 
-class Fighter(BaseComponent):
+class Fighter(base_component.BaseComponent):
     parent: game.entity.Actor
 
-    def __init__(self, newStats: Stats):
+    def __init__(self, newStats: stats.Stats):
         self.stats = newStats
         self.max_hp = self.calculate_max_health()
         self._hp = self.max_hp
@@ -28,12 +28,9 @@ class Fighter(BaseComponent):
 
     def die(self) -> None:
         if self.engine.player is self.parent:
-            self.engine.audio.play_sfx("player_die")
             death_message = "You died!"
             death_message_color = game.color.player_die
         else:
-            if(self.parent.name == "Orc"):
-                self.engine.audio.play_sfx("orc_die")
             death_message = f"{self.parent.name} is dead!"
             death_message_color = game.color.enemy_die
 

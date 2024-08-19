@@ -1,18 +1,22 @@
 from __future__ import annotations
 
-from typing import Optional, Tuple, Type, TypeVar, Union
+from typing import Optional, Tuple, Type, TypeVar, Union, TYPE_CHECKING
 import copy
 import math
 
-import game.components.ai
+if TYPE_CHECKING:
+    import game.components.ai
+    
 import game.components.consumable
 import game.components.equipment
 import game.components.equippable
 import game.components.fighter
 import game.components.inventory
 import game.components.stats
+import game.components.attachable
 import game.game_map
 import game.render_order
+import game.components.effect_handler
 
 T = TypeVar("T", bound="Entity")
 
@@ -46,6 +50,8 @@ class Entity:
             # If parent isn't provided now then it will be set later.
             self.parent = parent
             parent.entities.add(self)
+
+        self.effect_handler = game.components.effect_handler.EffectHandler()
 
     @property
     def gamemap(self) -> game.game_map.GameMap:
@@ -138,6 +144,7 @@ class Item(Entity):
         name: str = "<Unnamed>",
         consumable: Optional[game.components.consumable.Consumable] = None,
         equippable: Optional[game.components.equippable.Equippable] = None,
+        attachable: Optional[game.components.attachable.Attachable] = None,
         value: float = 0,
         weight: float = 0,
         count: int = 1,
@@ -163,8 +170,14 @@ class Item(Entity):
         if self.equippable:
             self.equippable.parent = self
 
-        self.value = 0
-        self.weight = 0
-        self.count = 1
+        self.attachable = attachable
+        
+        if self.attachable:
+            self.attachable.parent = self
+
+
+        self.value = value
+        self.weight = weight
+        self.count = count
 
         self.stackable = stackable

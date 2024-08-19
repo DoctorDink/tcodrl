@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from typing import List
 
-from game.components.base_component import BaseComponent
+import game.components.base_component as base_component
 import game.entity
 
 
-class Inventory(BaseComponent):
+class Inventory(base_component.BaseComponent):
     parent: game.entity.Actor
 
     def __init__(self, capacity: int):
