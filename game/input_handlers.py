@@ -7,7 +7,6 @@ import tcod
 import libtcodpy
 
 import game.components
-import game.components.attachable
 
 if TYPE_CHECKING:
     import game.actions
@@ -238,6 +237,8 @@ class AttachmentEventHandler(AskUserEventHandler):
     TITLE = "<missing title>"
 
     def on_render(self, console: tcod.console.Console) -> None:
+        from game.components.attachable import Attachable, Socket
+
         """Render an inventory menu, which displays the items in the inventory, and the letter to select them.
         Will move to a different position based on where the player is located, so the player can always see where
         they are.
@@ -261,7 +262,7 @@ class AttachmentEventHandler(AskUserEventHandler):
         console.print(1, 1, f" {self.TITLE} ", fg=(0, 0, 0), bg=(255, 255, 255))
 
         if number_of_total_sockets > 0:
-            previousSocket : game.components.attachable.Socket
+            previousSocket : Socket
             previousSocket = self.engine.player.attachments.get_sockets()[0]
             socketDepth = 0
             for i, socket in enumerate(self.engine.player.attachments.get_sockets()):
