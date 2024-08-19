@@ -51,7 +51,8 @@ class Engine:
                     try:
                         actor.ai.perform()
                     except game.exceptions.Impossible:
-                        pass  # Ignore impossible action exceptions from AI
+                        #TODO: Find a more graceful solution to enemies trying to do the impossible
+                        actor.cooldown = 100
             self.lower_cooldowns(next_cooldown)
             next_group, next_cooldown = self.get_next_actor_group()
 
