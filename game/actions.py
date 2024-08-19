@@ -1,18 +1,19 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional, Tuple
+from typing import Optional, Tuple, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from game.entity import Actor
 
 import game.color
 import game.entity
 import game.exceptions
+import game.engine
 
-if TYPE_CHECKING:
-    import game.engine
-    import game.entity
 
 
 class Action:
-    def __init__(self, entity: game.entity.Actor, cooldown: int = 100) -> None:
+    def __init__(self, entity: Actor, cooldown: int = 100) -> None:
         super().__init__()
         self.entity = entity
         self.cooldown = cooldown
@@ -43,7 +44,7 @@ class Action:
 class PickupAction(Action):
     """Pickup an item and add it to the inventory, if there is room for it."""
 
-    def __init__(self, entity: game.entity.Actor, cooldown: int = 25):
+    def __init__(self, entity: Actor, cooldown: int = 25):
         super().__init__(entity, cooldown)
 
     def perform(self) -> None:
@@ -210,9 +211,14 @@ class Move(ActionWithDirection):
 
 
 class Bump(ActionWithDirection):
+    def __init__(self, melee_cooldown: int, move_cooldown: int, entity: game.entity.Actor, dx: int, dy: int):
+        super().__init__(0, entity, dx, dy)
+        self.melee_cooldown = melee_cooldown
+        self.move_cooldown = move_cooldown
+
     def perform(self) -> None:
         if self.target_actor:
-            return MeleeAction(self.entity, self.dx, self.dy).perform()
+            return MeleeAction(self.melee_cooldown, self.entity, self.dx, self.dy).perform()
 
         else:
-            return Move(self.entity, self.dx, self.dy).perform()
+            return Move(self.move_cooldown, self.entity, self.dx, self.dy).perform()

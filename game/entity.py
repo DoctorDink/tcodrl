@@ -1,10 +1,12 @@
 from __future__ import annotations
 
-from typing import Optional, Tuple, Type, TypeVar, Union
+from typing import Optional, Tuple, Type, TypeVar, Union, TYPE_CHECKING
 import copy
 import math
 
-import game.components.ai
+if TYPE_CHECKING:
+    import game.components.ai
+    
 import game.components.consumable
 import game.components.equipment
 import game.components.equippable

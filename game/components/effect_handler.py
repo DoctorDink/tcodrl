@@ -1,15 +1,18 @@
-from typing import Optional, Union, Callable
+from __future__ import annotations
+
+from typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from game.entity import Entity
 
 import game.actions
-import game.components.base_component as base_component
-import game.components.effect as effect
-
-import game.entity
 import game.exceptions
 import game.stat_types
+import game.components.effect as effect
+import game.components.base_component as base_component
 
 class EffectHandler(base_component.BaseComponent):
-    parent: game.Entity
+    parent: Entity
 
     def __init__(self) -> None:
         self.effects: list[effect.Effect] = []

@@ -1,12 +1,14 @@
 from __future__ import annotations
 
-from typing import Callable, Optional, Tuple, Union
+from typing import Callable, Optional, Tuple, Union, TYPE_CHECKING
 import os
 
 import tcod
 import libtcodpy
 
-import game.actions
+if TYPE_CHECKING:
+    import game.actions
+    
 import game.color
 import game.engine
 import game.entity
@@ -439,7 +441,7 @@ class MainGameEventHandler(EventHandler):
 
         if key in MOVE_KEYS:
             dx, dy = MOVE_KEYS[key]
-            action = game.actions.Bump(player, dx, dy)
+            action = game.actions.Bump(100, 100, player, dx, dy)
         elif key in WAIT_KEYS:
             action = game.actions.WaitAction(player)
         elif key in HEAL_KEYS:
@@ -451,7 +453,7 @@ class MainGameEventHandler(EventHandler):
             return HistoryViewer(self.engine)
 
         elif key == tcod.event.KeySym.g:
-            action = game.actions.PickupAction(player)
+            action = game.actions.PickupAction(cooldown=25, actor=player)
 
         elif key == tcod.event.KeySym.TAB:
             return InventoryActivateHandler(self.engine)

@@ -1,18 +1,18 @@
 from __future__ import annotations
 
-from typing import List, Optional, Tuple
-import random
+from typing import List, Tuple, Optional, TYPE_CHECKING
 
-import numpy as np
+import numpy as np  # type: ignore
+import random
 import tcod
 
 import game.actions
-import game.entity
+import game.components.base_component as base_component
 
-import importlib
-actions = importlib.import_module("game.actions")
+if TYPE_CHECKING:
+    from entity import Actor
 
-class BaseAI(game.actions.Action):
+class BaseAI(game.actions.Action, base_component.BaseComponent):
     isHostile = 0 # Enemies are set to hostile when they are revealed on the map, potentially update to A* pathfinding for LOS.
     def perform(self) -> None:
         raise NotImplementedError()
@@ -48,7 +48,7 @@ class BaseAI(game.actions.Action):
 
 
 class HostileEnemy(BaseAI):
-    def __init__(self, entity: game.entity.Actor):
+    def __init__(self, entity: Actor):
         super().__init__(entity)
         self.path: List[Tuple[int, int]] = []
 
