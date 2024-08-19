@@ -69,6 +69,7 @@ class Engine:
         self.game_map.explored |= self.game_map.visible
 
     def render(self, console: tcod.console.Console) -> None:
+        game.render_functions.render_flat(console=console, colorFull=game.color.dark_brown)
         self.game_map.render(console)
 
         self.message_log.render(console=console, x=21, y=45, width=40, height=5)

@@ -19,6 +19,11 @@ def get_names_at_location(x: int, y: int, game_map: game.game_map.GameMap) -> st
 
     return names.capitalize()
 
+def render_flat(console: tcod.console.Console,
+                colorFull: game.color) -> None:
+    
+    console.draw_rect(x=0, y=0, width=80, height=80, ch=1, bg=colorFull) #0, 45
+
 
 def render_bar(console: tcod.console.Console, 
     current_value: int, maximum_value: int, total_width: int, 
@@ -42,8 +47,8 @@ def render_extra_info(console: tcod.console.Console, stats: game.components.stat
             height=8,
             title="Character Stats",
             clear=True,
-            fg=(255, 255, 255),
-            bg=(0, 0, 0),
+            fg=(201, 113, 30),
+            bg=(32, 20, 6),
         )
     console.print(x=61, y=1, string=f"Bulk: {stats.bulk}", fg=game.color.white)
     console.print(x=61, y=2, string=f"Coordination: {stats.coordination}", fg=game.color.white)
@@ -57,7 +62,7 @@ def render_dungeon_level(console: tcod.console.Console, dungeon_level: int, loca
     """
     x, y = location
 
-    console.print(x=x, y=y, string=f"Dungeon level: {dungeon_level}")
+    console.print(x=x, y=y, string=f"Dungeon level: {dungeon_level}", fg=(255, 255, 255), bg=(32, 20, 6))
 
 
 def render_names_at_mouse_location(console: tcod.console.Console, x: int, y: int, engine: game.engine.Engine) -> None:

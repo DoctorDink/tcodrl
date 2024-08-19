@@ -35,19 +35,19 @@ def new_tile(
 
 
 # SHROUD represents unexplored, unseen tiles
-SHROUD = np.array((ord(" "), (255, 255, 255), (0, 0, 0)), dtype=graphic_dt)
+SHROUD = np.array((ord(" "), (255, 255, 255), (32, 20, 6)), dtype=graphic_dt)
 
 floor = new_tile(
     walkable=True,
     transparent=True,
-    dark=(ord(" "), (255, 255, 255), (50, 50, 150)),
-    light=(ord(" "), (255, 255, 255), (200, 180, 50)),
+    dark=(ord(" "), (255, 255, 255), (29, 15, 29)),
+    light=(ord(" "), (255, 255, 255), (60, 55, 72)),
 )
 wall = new_tile(
     walkable=False,
     transparent=False,
-    dark=(ord(" "), (255, 255, 255), (0, 0, 100)),
-    light=(ord(" "), (255, 255, 255), (130, 110, 50)),
+    dark=(ord(" "), (255, 255, 255), (75, 81, 98)),
+    light=(ord(" "), (255, 255, 255), (112, 131, 147)),
 )
 down_stairs = new_tile(
     walkable=True,
