@@ -42,7 +42,7 @@ WAIT_KEYS = {
 }
 
 HEAL_KEYS = {
-    tcod.event.KeySym.BACKSPACE,
+    tcod.event.KeySym.BACKQUOTE,
 }
 
 CONFIRM_KEYS = {
@@ -255,9 +255,9 @@ class InventoryEventHandler(AskUserEventHandler):
             height=height,
             clear=True,
             fg=(255, 255, 255),
-            bg=(0, 0, 0),
+            bg=(32, 20, 6),
         )
-        console.print(1, 1, f" {self.TITLE} ", fg=(0, 0, 0), bg=(255, 255, 255))
+        console.print(1, 1, f" {self.TITLE} ", fg=(201, 113, 30), bg=(32, 20, 6))
 
         if number_of_items_in_inventory > 0:
             for i, item in enumerate(self.engine.player.inventory.items):
@@ -270,7 +270,7 @@ class InventoryEventHandler(AskUserEventHandler):
                 if is_equipped:
                     item_string = f"{item_string} (E)"
 
-                console.print(1 + 1,1 + i + 1, item_string)
+                console.print(1 + 3, 3 + i + 1, item_string)
         else:
             console.print(1 + 1, 1 + 1, "(Empty)")
 
@@ -459,13 +459,16 @@ class MainGameEventHandler(EventHandler):
             return InventoryActivateHandler(self.engine)
         elif key == tcod.event.KeySym.d:
             return InventoryDropHandler(self.engine)
-        elif key == tcod.event.KeySym.c:
-            return CharacterScreenEventHandler(self.engine)
         elif key == tcod.event.KeySym.x:
             return LookHandler(self.engine)
 
         # No valid key was pressed
         return action
+        '''
+        elif key == tcod.event.KeySym.c:
+            return CharacterScreenEventHandler(self.engine)
+        '''
+        
 
 
 class GameOverEventHandler(EventHandler):
