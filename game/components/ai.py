@@ -32,10 +32,11 @@ class BaseAI(game.actions.Action, base_component.BaseComponent):
                 # A lower number means more enemies will crowd behind each other in
                 # hallways.  A higher number means enemies will take longer paths in
                 # order to surround the player.
-                cost[entity.x, entity.y] += 10
+                cost[entity.x, entity.y] += random.randint(8, 12)
 
         # Create a graph from the cost array and pass that graph to a new pathfinder.
         graph = tcod.path.SimpleGraph(cost=cost, cardinal=2, diagonal=3)
+
         pathfinder = tcod.path.Pathfinder(graph)
 
         pathfinder.add_root((self.entity.x, self.entity.y))  # Start position.

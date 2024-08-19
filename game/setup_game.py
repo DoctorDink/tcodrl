@@ -25,10 +25,10 @@ background_image = Image.open("data/menu_background.png")
 
 def new_game() -> game.engine.Engine:
     """Return a brand new game session as an Engine instance."""
-    map_width = 80
-    map_height = 43
+    map_width = 65
+    map_height = 40
 
-    room_max_size = 10
+    room_max_size = 8
     room_min_size = 6
     max_rooms = 30
 

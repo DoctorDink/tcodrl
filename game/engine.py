@@ -91,6 +91,8 @@ class Engine:
             dungeon_level=self.game_world.current_floor,
             location=(0, 47),
         )
+        
+        game.render_functions.render_extra_info(console=console, stats=self.player.fighter.stats)
 
         game.render_functions.render_names_at_mouse_location(console=console, x=21, y=44, engine=self)
 
