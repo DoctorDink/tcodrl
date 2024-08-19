@@ -41,20 +41,11 @@ class Engine:
         return False
           
 
-    def handle_enemy_turns(self) -> None:
-        print("---------------------------------------")
-        all_actors = sorted(set(self.game_map.actors), key=lambda Actor: Actor.cooldown)
-        
+    def handle_enemy_turns(self) -> None: 
         next_group: set[game.entity.Actor]
         next_cooldown: int
         next_group, next_cooldown = self.get_next_actor_group()
-        i = 1
         while not (self.player in next_group):
-
-            print(i)
-            for x in all_actors:
-                print(f"{x.name}: {x.cooldown}")
-            i+=1 
             for actor in next_group:
                 if actor.ai:
                     try:
