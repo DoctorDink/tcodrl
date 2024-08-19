@@ -46,7 +46,6 @@ class Engine:
           
 
     def handle_enemy_turns(self) -> None:
-        print("---------------------------------------")
         all_actors = sorted(set(self.game_map.actors), key=lambda Actor: Actor.cooldown)
         
         next_group: set[game.entity.Actor]
@@ -54,10 +53,6 @@ class Engine:
         next_group, next_cooldown = self.get_next_actor_group()
         i = 1
         while not (self.player in next_group):
-
-            print(i)
-            for x in all_actors:
-                print(f"{x.name}: {x.cooldown}")
             i+=1 
             for actor in next_group:
                 if actor.ai:
@@ -103,6 +98,8 @@ class Engine:
             dungeon_level=self.game_world.current_floor,
             location=(0, 47),
         )
+        
+        game.render_functions.render_extra_info(console=console, stats=self.player.fighter.stats)
 
         game.render_functions.render_names_at_mouse_location(console=console, x=21, y=44, engine=self)
 

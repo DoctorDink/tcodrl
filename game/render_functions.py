@@ -7,6 +7,8 @@ import tcod
 import game.color
 import game.engine
 import game.game_map
+import game.components.fighter
+import game.components.stats
 
 
 def get_names_at_location(x: int, y: int, game_map: game.game_map.GameMap) -> str:
@@ -32,6 +34,22 @@ def render_bar(console: tcod.console.Console,
 
     console.print(x=xPos, y=yPos, string=f"{name}: {current_value}/{maximum_value}", fg=colorText)
 
+def render_extra_info(console: tcod.console.Console, stats: game.components.stats.Stats):
+    console.draw_frame(
+            x=60,
+            y=0,
+            width=20,
+            height=8,
+            title="Character Stats",
+            clear=True,
+            fg=(255, 255, 255),
+            bg=(0, 0, 0),
+        )
+    console.print(x=61, y=1, string=f"Bulk: {stats.bulk}", fg=game.color.white)
+    console.print(x=61, y=2, string=f"Coordination: {stats.coordination}", fg=game.color.white)
+    console.print(x=61, y=3, string=f"Processing: {stats.processing}", fg=game.color.white)
+    console.print(x=61, y=4, string=f"Shielding: {stats.shielding}", fg=game.color.white)
+    # Extend to listing limbs?
 
 def render_dungeon_level(console: tcod.console.Console, dungeon_level: int, location: Tuple[int, int]) -> None:
     """
