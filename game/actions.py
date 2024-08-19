@@ -182,8 +182,6 @@ class MeleeAction(ActionWithDirection):
 
         if damage > 0:
             self.engine.message_log.add_message(f"{attack_desc} for {damage} hit points.", attack_color)
-            if (self.entity == self.engine.player):
-                self.engine.audio.play_sfx("sword_slash")
             target.fighter.hp -= damage
         else:
             self.engine.message_log.add_message(f"{attack_desc} but does no damage.", attack_color)

@@ -8,7 +8,6 @@ import tcod
 import game.color
 import game.entity
 import game.exceptions
-import game.audio
 import game.game_map
 import game.input_handlers
 import game.message_log
@@ -23,9 +22,6 @@ class Engine:
         self.message_log = game.message_log.MessageLog()
         self.mouse_location = (0, 0)
         self.player = player
-        self.audio = game.audio.Audio()
-        self.audio.load_sounds()
-        self.audio.play_music("data/scratch.wav")
         
     def lower_cooldowns(self, amount: int):
         for entity in self.game_map.actors:

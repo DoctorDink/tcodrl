@@ -61,13 +61,14 @@ class HostileEnemy(BaseAI):
         if self.engine.game_map.visible[self.entity.x, self.entity.y]:
             self.isHostile = 1
             if distance <= 1:
-                return game.actions.MeleeAction(self.entity, dx, dy).perform()
+                return game.actions.MeleeAction(100, self.entity, dx, dy).perform()
 
             self.path = self.get_path_to(target.x, target.y)
 
         if self.path:
             dest_x, dest_y = self.path.pop(0)
             return game.actions.Move(
+                100,
                 self.entity,
                 dest_x - self.entity.x,
                 dest_y - self.entity.y,

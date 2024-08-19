@@ -8,7 +8,7 @@ import libtcodpy
 
 if TYPE_CHECKING:
     import game.actions
-    
+
 import game.color
 import game.engine
 import game.entity
@@ -42,7 +42,7 @@ WAIT_KEYS = {
 }
 
 HEAL_KEYS = {
-    tcod.event.KeySym.BACKQUOTE,
+    tcod.event.KeySym.BACKSPACE,
 }
 
 CONFIRM_KEYS = {
@@ -453,7 +453,7 @@ class MainGameEventHandler(EventHandler):
             return HistoryViewer(self.engine)
 
         elif key == tcod.event.KeySym.g:
-            action = game.actions.PickupAction(cooldown=25, actor=player)
+            action = game.actions.PickupAction(player)
 
         elif key == tcod.event.KeySym.TAB:
             return InventoryActivateHandler(self.engine)
