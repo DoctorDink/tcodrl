@@ -174,8 +174,8 @@ class Item(Entity):
             self.attachable.parent = self
 
 
-        self.value = 0
-        self.weight = 0
-        self.count = 1
+        self.value = value
+        self.weight = weight
+        self.count = count
 
         self.stackable = stackable

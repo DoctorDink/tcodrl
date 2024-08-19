@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional, Tuple
 
 import game.color
+from game.entity import Actor
 import game.exceptions
 
 if TYPE_CHECKING:
@@ -21,8 +22,10 @@ class Action:
         """Return the engine this action belongs to."""
         return self.entity.gamemap.engine
 
-    def action_performed(self):
-        self.entity.cooldown = self.cooldown
+    def action_performed(self, cooldown: int):
+        self.entity.cooldown = cooldown
+        self.entity.effect_handler.activate_all(self)
+        
 
     def perform(self) -> None:
         """Perform this action with the objects needed to determine its scope.
@@ -40,8 +43,8 @@ class Action:
 class PickupAction(Action):
     """Pickup an item and add it to the inventory, if there is room for it."""
 
-    def __init__(self, entity: game.entity.Actor):
-        super().__init__(entity)
+    def __init__(self, entity: game.entity.Actor, cooldown: int = 25):
+        super().__init__(entity, cooldown)
 
     def perform(self) -> None:
         actor_location_x = self.entity.x
@@ -69,13 +72,14 @@ class PickupAction(Action):
 
                 self.engine.message_log.add_message(f"You picked up the {item.name}!")
                 
+                self.action_performed(self.cooldown)
                 return
 
         raise game.exceptions.Impossible("There is nothing here to pick up.")
 
 
 class ItemAction(Action):
-    def __init__(self, entity: game.entity.Actor, item: game.entity.Item, target_xy: Optional[Tuple[int, int]] = None):
+    def __init__(self, entity: game.entity.Actor, item: game.entity.Item, target_xy: Optional[Tuple[int, int]] = None, cooldown: int = 25):
         super().__init__(entity)
         self.item = item
         if not target_xy:
@@ -90,7 +94,9 @@ class ItemAction(Action):
     def perform(self) -> None:
         """Invoke the items ability, this action will be given to provide context."""
         if self.item.consumable:
-            self.item.consumable.activate(self)
+            cooldown = self.item.consumable.activate(self)
+            self.action_performed(cooldown)
+
 
 
 class DropItem(ItemAction):
@@ -98,25 +104,29 @@ class DropItem(ItemAction):
         if self.entity.equipment.item_is_equipped(self.item):
             self.entity.equipment.toggle_equip(self.item)
         self.entity.inventory.drop(self.item)
+        self.action_performed(0)
 
 
 class EquipAction(Action):
-    def __init__(self, entity: game.entity.Actor, item: game.entity.Item):
-        super().__init__(entity)
+    def __init__(self, cooldown, entity: game.entity.Actor, item: game.entity.Item):
+        super().__init__(entity, cooldown)
 
         self.item = item
 
     def perform(self) -> None:
         self.entity.equipment.toggle_equip(self.item)
+        self.action_performed(self.cooldown)
 
 
 class WaitAction(Action):
     def perform(self) -> None:
-        self.entity.cooldown = self.cooldown
-        pass
+        self.action_performed(100)
 
 
 class TakeStairsAction(Action):
+    def __init__(self, entity: Actor, cooldown: int = 100) -> None:
+        super().__init__(entity, cooldown)
+
     def perform(self) -> None:
         """
         Take the stairs, if any exist at the entity's location.
@@ -124,13 +134,14 @@ class TakeStairsAction(Action):
         if (self.entity.x, self.entity.y) == self.engine.game_map.downstairs_location:
             self.engine.game_world.generate_floor()
             self.engine.message_log.add_message("You descend the staircase.", game.color.descend)
+            self.action_performed(self.cooldown)
         else:
             raise game.exceptions.Impossible("There are no stairs here.")
 
 
 class ActionWithDirection(Action):
-    def __init__(self, entity: game.entity.Actor, dx: int, dy: int):
-        super().__init__(entity)
+    def __init__(self, cooldown, entity: game.entity.Actor, dx: int, dy: int):
+        super().__init__(entity,cooldown)
 
         self.dx = dx
         self.dy = dy
@@ -176,7 +187,7 @@ class MeleeAction(ActionWithDirection):
         else:
             self.engine.message_log.add_message(f"{attack_desc} but does no damage.", attack_color)
         
-        self.entity.cooldown = self.cooldown
+        self.action_performed(self.cooldown)
 
 
 class Move(ActionWithDirection):
@@ -194,10 +205,8 @@ class Move(ActionWithDirection):
             raise game.exceptions.Impossible("That way is blocked.")
 
         self.entity.move(self.dx, self.dy)
-        if self.entity.name == "Orc":
-            self.entity.cooldown = 150 
-        else:
-            self.entity.cooldown = self.cooldown
+        
+        self.action_performed(self.cooldown)
 
 
 class Bump(ActionWithDirection):

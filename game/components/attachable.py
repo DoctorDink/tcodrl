@@ -9,7 +9,9 @@ import game.entity
 import game.components.effect
 import game.exceptions
 
-class Socket():  
+class Socket(BaseComponent):
+    parent: Attachable 
+
     def __init__(self, type: AttachmentType, attachment: Optional[game.entity.Item]) -> None:
         self.type = type
         self.attachment = attachment
@@ -44,11 +46,14 @@ class Attachable(BaseComponent):
             sockets: list[Socket] = [],
             effects: list[game.components.effect.Effect] = []
             ) -> None:
-        
+
         self.type = type
         self.hp = hp
         self.max_hp = max_hp
         self.sockets = sockets
+        for socket in self.sockets:
+            socket.parent = self
+
         self.effects = effects
 
 
@@ -59,7 +64,7 @@ class Attachable(BaseComponent):
         #Error checking for attachment is done in the Socket class
         self.sockets[socket_index].attach(attachment)
 
-    def detach(self, socket_index) -> Optional[game.entity.Item]:
+    def detach(self, socket_index: int) -> Optional[game.entity.Item]:
         if socket_index >= len(self.sockets) or socket_index < 0:
             raise game.exceptions.Impossible("That is not a valid spot!")
         

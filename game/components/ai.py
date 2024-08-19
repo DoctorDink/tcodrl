@@ -7,7 +7,6 @@ import numpy as np
 import tcod
 
 from game.actions import Action
-import game.actions
 import game.entity
 
 

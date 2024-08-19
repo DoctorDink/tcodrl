@@ -1,5 +1,6 @@
 from typing import Optional, Union, Callable
 
+import game.actions
 from game.components.base_component import BaseComponent
 from game.components.effect import Effect
 
@@ -35,11 +36,11 @@ class EffectHandler(BaseComponent):
                 self.effects[effect_index].stacks -= stacks
 
 
-    def activate_all(self) -> dict[game.stat_types.StatType, int]:
+    def activate_all(self, action: game.actions.Action) -> dict[game.stat_types.StatType, int]:
         boosts: dict[game.stat_types.StatType, int] = {}
         to_remove = []
         for effect in self.effects:
-            result = effect.activate()
+            result = effect.activate(action)
 
             if isinstance(result, bool):
                 if not result:
