@@ -21,6 +21,9 @@ class Action:
         """Return the engine this action belongs to."""
         return self.entity.gamemap.engine
 
+    def action_performed(self):
+        self.entity.cooldown = self.cooldown
+
     def perform(self) -> None:
         """Perform this action with the objects needed to determine its scope.
 
@@ -30,6 +33,7 @@ class Action:
 
         This method must be overridden by Action subclasses.
         """
+
         raise NotImplementedError()
 
 
@@ -64,7 +68,7 @@ class PickupAction(Action):
                     inventory.items.append(item)
 
                 self.engine.message_log.add_message(f"You picked up the {item.name}!")
-                self.entity.cooldown = self.cooldown
+                
                 return
 
         raise game.exceptions.Impossible("There is nothing here to pick up.")

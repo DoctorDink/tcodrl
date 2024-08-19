@@ -14,6 +14,7 @@ import game.components.stats
 import game.components.attachable
 import game.game_map
 import game.render_order
+import game.components.effect_handler
 
 T = TypeVar("T", bound="Entity")
 
@@ -47,6 +48,8 @@ class Entity:
             # If parent isn't provided now then it will be set later.
             self.parent = parent
             parent.entities.add(self)
+
+        self.effect_handler = game.components.effect_handler.EffectHandler()
 
     @property
     def gamemap(self) -> game.game_map.GameMap:
