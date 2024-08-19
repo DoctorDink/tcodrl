@@ -1,12 +1,14 @@
 from __future__ import annotations
 
-from typing import Callable, Optional, Tuple, Union
+from typing import Callable, Optional, Tuple, Union, TYPE_CHECKING
 import os
 
 import tcod
 import libtcodpy
 
-import game.actions
+if TYPE_CHECKING:
+    import game.actions
+
 import game.color
 import game.engine
 import game.entity
@@ -40,7 +42,7 @@ WAIT_KEYS = {
 }
 
 HEAL_KEYS = {
-    tcod.event.KeySym.BACKQUOTE,
+    tcod.event.KeySym.BACKSPACE,
 }
 
 CONFIRM_KEYS = {
@@ -242,30 +244,20 @@ class InventoryEventHandler(AskUserEventHandler):
         super().on_render(console)
         number_of_items_in_inventory = len(self.engine.player.inventory.items)
 
-        height = number_of_items_in_inventory + 2
+        height = 36
 
-        if height <= 3:
-            height = 3
-
-        if self.engine.player.x <= 30:
-            x = 40
-        else:
-            x = 0
-
-        y = 0
-
-        width = len(self.TITLE) + 4
+        width = 60
 
         console.draw_frame(
-            x=x,
-            y=y,
+            x=3,
+            y=3,
             width=width,
             height=height,
             clear=True,
             fg=(255, 255, 255),
             bg=(0, 0, 0),
         )
-        console.print(x + 1, y, f" {self.TITLE} ", fg=(0, 0, 0), bg=(255, 255, 255))
+        console.print(1, 1, f" {self.TITLE} ", fg=(0, 0, 0), bg=(255, 255, 255))
 
         if number_of_items_in_inventory > 0:
             for i, item in enumerate(self.engine.player.inventory.items):
@@ -278,9 +270,9 @@ class InventoryEventHandler(AskUserEventHandler):
                 if is_equipped:
                     item_string = f"{item_string} (E)"
 
-                console.print(x + 1, y + i + 1, item_string)
+                console.print(1 + 1,1 + i + 1, item_string)
         else:
-            console.print(x + 1, y + 1, "(Empty)")
+            console.print(1 + 1, 1 + 1, "(Empty)")
 
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:
         player = self.engine.player
@@ -449,7 +441,7 @@ class MainGameEventHandler(EventHandler):
 
         if key in MOVE_KEYS:
             dx, dy = MOVE_KEYS[key]
-            action = game.actions.Bump(player, dx, dy)
+            action = game.actions.Bump(100, 100, player, dx, dy)
         elif key in WAIT_KEYS:
             action = game.actions.WaitAction(player)
         elif key in HEAL_KEYS:

@@ -8,7 +8,6 @@ import tcod
 import game.color
 import game.entity
 import game.exceptions
-import game.audio
 import game.game_map
 import game.input_handlers
 import game.message_log
@@ -23,9 +22,6 @@ class Engine:
         self.message_log = game.message_log.MessageLog()
         self.mouse_location = (0, 0)
         self.player = player
-        self.audio = game.audio.Audio()
-        self.audio.load_sounds()
-        self.audio.play_music("data/scratch.wav")
         
     def lower_cooldowns(self, amount: int):
         for entity in self.game_map.actors:
@@ -45,21 +41,18 @@ class Engine:
         return False
           
 
-    def handle_enemy_turns(self) -> None:
-        all_actors = sorted(set(self.game_map.actors), key=lambda Actor: Actor.cooldown)
-        
+    def handle_enemy_turns(self) -> None: 
         next_group: set[game.entity.Actor]
         next_cooldown: int
         next_group, next_cooldown = self.get_next_actor_group()
-        i = 1
         while not (self.player in next_group):
-            i+=1 
             for actor in next_group:
                 if actor.ai:
                     try:
                         actor.ai.perform()
                     except game.exceptions.Impossible:
-                        pass  # Ignore impossible action exceptions from AI
+                        #TODO: Find a more graceful solution to enemies trying to do the impossible
+                        actor.cooldown = 100
             self.lower_cooldowns(next_cooldown)
             next_group, next_cooldown = self.get_next_actor_group()
 

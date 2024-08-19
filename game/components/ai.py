@@ -1,17 +1,18 @@
 from __future__ import annotations
 
-from typing import List, Optional, Tuple
-import random
+from typing import List, Tuple, Optional, TYPE_CHECKING
 
-import numpy as np
+import numpy as np  # type: ignore
+import random
 import tcod
 
-from game.actions import Action
 import game.actions
-import game.entity
+import game.components.base_component as base_component
 
+if TYPE_CHECKING:
+    from entity import Actor
 
-class BaseAI(Action):
+class BaseAI(game.actions.Action, base_component.BaseComponent):
     isHostile = 0 # Enemies are set to hostile when they are revealed on the map, potentially update to A* pathfinding for LOS.
     def perform(self) -> None:
         raise NotImplementedError()
@@ -48,7 +49,7 @@ class BaseAI(Action):
 
 
 class HostileEnemy(BaseAI):
-    def __init__(self, entity: game.entity.Actor):
+    def __init__(self, entity: Actor):
         super().__init__(entity)
         self.path: List[Tuple[int, int]] = []
 
@@ -61,13 +62,14 @@ class HostileEnemy(BaseAI):
         if self.engine.game_map.visible[self.entity.x, self.entity.y]:
             self.isHostile = 1
             if distance <= 1:
-                return game.actions.MeleeAction(self.entity, dx, dy).perform()
+                return game.actions.MeleeAction(100, self.entity, dx, dy).perform()
 
             self.path = self.get_path_to(target.x, target.y)
 
         if self.path:
             dest_x, dest_y = self.path.pop(0)
             return game.actions.Move(
+                100,
                 self.entity,
                 dest_x - self.entity.x,
                 dest_y - self.entity.y,
