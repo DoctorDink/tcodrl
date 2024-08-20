@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import Optional
 import copy
 import lzma
-import pickle
+import dill as pickle
 import traceback
 
 from PIL import Image  # type: ignore
@@ -20,7 +20,7 @@ import game.input_handlers
 import game.procgen
 
 # Load the background image.  Pillow returns an object convertable into a NumPy array.
-background_image = Image.open("data/menu_background.png")
+background_image = Image.open("data/menu.jpg")
 
 
 def new_game() -> game.engine.Engine:
@@ -82,14 +82,14 @@ class MainMenu(game.input_handlers.BaseEventHandler):
         console.print(
             console.width // 2,
             console.height // 2 - 4,
-            "Yet Another Roguelike Tutorial",
+            "CYBERGORE",
             fg=game.color.menu_title,
             alignment=libtcodpy.CENTER,
         )
         console.print(
             console.width // 2,
             console.height - 2,
-            "By Michael",
+            "By Doctor Dink and Toggytokyo",
             fg=game.color.menu_title,
             alignment=libtcodpy.CENTER,
         )
