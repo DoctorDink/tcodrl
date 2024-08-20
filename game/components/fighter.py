@@ -1,20 +1,46 @@
 from __future__ import annotations
 
+import copy
+
 import game.components.base_component as base_component
 import game.components.stats as stats
 import game.color
 import game.entity
 import game.input_handlers
 import game.render_order
+import game.stat_types
 
 
 class Fighter(base_component.BaseComponent):
     parent: game.entity.Actor
 
-    def __init__(self, newStats: stats.Stats):
-        self.stats = newStats
+    def __init__(self, base_stats: stats.Stats):
+        self.parent = None
+        self.base_stats = base_stats
         self.max_hp = self.calculate_max_health()
         self._hp = self.max_hp
+        
+
+
+    @property
+    def stats(self) -> stats.Stats:
+        stats_after_effects = copy.deepcopy(self.base_stats)
+
+        if not self.parent:
+            return stats_after_effects
+        
+        for stat in self.parent.effect_handler.current_stat_changes:
+            if stat == game.stat_types.StatType.BULK:
+                stats_after_effects.bulk += self.parent.effect_handler.current_stat_changes[stat]
+            if stat == game.stat_types.StatType.COORDINATION:
+                stats_after_effects.coordination += self.parent.effect_handler.current_stat_changes[stat]
+            if stat == game.stat_types.StatType.SHIELDING:
+                stats_after_effects.shielding += self.parent.effect_handler.current_stat_changes[stat]
+            if stat == game.stat_types.StatType.PROCESSING:
+                stats_after_effects.processing += self.parent.effect_handler.current_stat_changes[stat]
+
+        return stats_after_effects
+            
 
     @property
     def hp(self) -> int:

@@ -4,6 +4,8 @@ from game.components.equipment import Equipment
 from game.components.fighter import Fighter
 from game.components.inventory import Inventory
 from game.components.stats import Stats
+from game.components.attachments import Attachments
+import game.factories.limb_factories as limbs
 from game.entity import Actor, Item
 
 player = Actor(
@@ -12,7 +14,8 @@ player = Actor(
     name="Player",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
-    fighter=Fighter(Stats(40, 10, 10, 10)),
+    fighter=Fighter(Stats(100, 10, 10, 10)),
+    chassis=limbs.basic_chassis,
     inventory=Inventory(capacity=26),
 )
 
@@ -23,6 +26,7 @@ orc = Actor(
     ai_cls=HostileEnemy,
     equipment=Equipment(),
     fighter=Fighter(Stats(10, 10, 10, 10)),
+    chassis=limbs.basic_chassis,
     inventory=Inventory(capacity=0),
 )
 troll = Actor(
@@ -32,6 +36,7 @@ troll = Actor(
     ai_cls=HostileEnemy,
     equipment=Equipment(),
     fighter=Fighter(Stats(25, 20, 3, 3)),
+    chassis=limbs.basic_chassis,
     inventory=Inventory(capacity=0),
 )
 

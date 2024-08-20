@@ -1,7 +1,11 @@
-from typing import Optional, Union, Callable
+from __future__ import annotations
+
+from typing import Optional, Union, Callable, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import game.components.effect_handler as effect_handler
 
 import game.components.base_component as base_component
-import game.components.effect_handler as effect_handler
 import game.actions 
 import game.stat_types 
 
@@ -13,7 +17,7 @@ class Effect(base_component.BaseComponent):
             self,
             name,
             description,
-            effect: Callable[[game.actions.Action], Union[dict[game.stat_types.StatType, int], bool]],
+            effect: Callable[[Optional[game.actions.Action]], Union[dict[game.stat_types.StatType, int], bool]],
             stacks: int = 1,
             stackable: bool = False, 
             ): 
