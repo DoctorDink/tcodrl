@@ -10,7 +10,7 @@ from game.entity import Actor, Item
 
 player = Actor(
     char="@",
-    color=(255, 255, 255),
+    color=(50, 130, 33),
     name="Player",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
@@ -21,7 +21,7 @@ player = Actor(
 
 orc = Actor(
     char="o",
-    color=(63, 127, 63),
+    color=(192, 40, 17),
     name="Orc",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
@@ -31,7 +31,7 @@ orc = Actor(
 )
 troll = Actor(
     char="T",
-    color=(0, 127, 0),
+    color=(192, 40, 17),
     name="Troll",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
