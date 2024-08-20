@@ -45,7 +45,7 @@ player = create_unit(
     name="Player",
     ai=HostileEnemy,
     equipment=Equipment(),
-    fighter=Fighter(Stats(10, 10, 10, 10)),
+    fighter=Fighter(Stats(50, 10, 50, 50)),
     inventory=Inventory(capacity=26),
 )
 

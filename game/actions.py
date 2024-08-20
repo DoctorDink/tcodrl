@@ -134,7 +134,7 @@ class TakeStairsAction(Action):
         """
         if (self.entity.x, self.entity.y) == self.engine.game_map.downstairs_location:
             self.engine.game_world.generate_floor()
-            self.engine.message_log.add_message("You descend the staircase.", game.color.descend)
+            self.engine.message_log.add_message("You ascend the staircase.", game.color.descend)
             self.action_performed(self.cooldown)
         else:
             raise game.exceptions.Impossible("There are no stairs here.")
