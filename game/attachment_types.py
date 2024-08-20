@@ -5,3 +5,4 @@ class AttachmentType(Enum):
     CHASSIS = auto()
     JOINT = auto()
     APPENDAGE = auto()
+    WEAPON = auto()

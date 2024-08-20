@@ -5,6 +5,7 @@ from typing import Optional
 import game.components.attachable
 import game.components.effect
 import game.attachment_types
+import game.exceptions
 import game.entity
 
 
@@ -35,6 +36,21 @@ class Attachments(game.components.base_component.BaseComponent):
         for effect in self.get_all_attachment_effects():
             self.parent.effect_handler.add_effect(effect)
 
+    def attach(self, attachment: game.entity.Item) -> None:
+        sockets = self.get_sockets()
+        print("---------")
+        for socket in sockets:
+            if (socket.attachment):
+                print (socket.attachment.name)
+            else: 
+                print ("EMPTY")
+            if not socket.attachment:
+                socket.attach(attachment)
+                for effect in self.get_all_attachment_effects():
+                    self.parent.effect_handler.add_effect(effect)
+                return
+            
+        raise game.exceptions.Impossible(f"No free slot to equip {attachment.name}")
 
     def get_all_attachment_effects(self) -> list[game.components.effect.Effect]:
         return self.chassis_socket.get_all_effects()

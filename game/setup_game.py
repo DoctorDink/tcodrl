@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import Optional
 import copy
 import lzma
-import pickle
+import dill as pickle
 import traceback
 
 from PIL import Image  # type: ignore
@@ -14,13 +14,13 @@ from tcod import libtcodpy
 import game.input_handlers
 import game.color
 import game.engine
-import game.factories.entity_factories
+import game.factories.unit_factories
 import game.game_map
 import game.input_handlers
 import game.procgen
 
 # Load the background image.  Pillow returns an object convertable into a NumPy array.
-background_image = Image.open("data/menu_background.png")
+background_image = Image.open("data/menu.jpg")
 
 
 def new_game() -> game.engine.Engine:
@@ -32,7 +32,7 @@ def new_game() -> game.engine.Engine:
     room_min_size = 6
     max_rooms = 30
 
-    player = copy.deepcopy(game.factories.entity_factories.player)
+    player = copy.deepcopy(game.factories.unit_factories.player)
 
     engine = game.engine.Engine(player=player)
 
@@ -48,7 +48,7 @@ def new_game() -> game.engine.Engine:
     engine.game_world.generate_floor()
     engine.update_fov()
 
-    engine.message_log.add_message("Hello and welcome, adventurer, to yet another dungeon!", game.color.welcome_text)
+    engine.message_log.add_message("You enter the first floor of the pyramid, filled with the rusted husks of previous adventurers.", game.color.welcome_text)
 
     dagger = copy.deepcopy(game.factories.entity_factories.dagger)
     leather_armor = copy.deepcopy(game.factories.entity_factories.leather_armor)
@@ -82,14 +82,14 @@ class MainMenu(game.input_handlers.BaseEventHandler):
         console.print(
             console.width // 2,
             console.height // 2 - 4,
-            "Yet Another Roguelike Tutorial",
+            "CYBERGORE",
             fg=game.color.menu_title,
             alignment=libtcodpy.CENTER,
         )
         console.print(
             console.width // 2,
             console.height - 2,
-            "By Michael",
+            "By Doctor Dink and Toggytokyo",
             fg=game.color.menu_title,
             alignment=libtcodpy.CENTER,
         )
