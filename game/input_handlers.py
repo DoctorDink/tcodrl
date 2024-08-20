@@ -234,7 +234,7 @@ class AttachmentEventHandler(AskUserEventHandler):
     What happens then depends on the subclass.
     """
 
-    TITLE = "<missing title>"
+    TITLE = "Socket Equipment Screen"
 
     def on_render(self, console: tcod.console.Console) -> None:
         from game.components.attachable import Attachable, Socket
@@ -257,9 +257,10 @@ class AttachmentEventHandler(AskUserEventHandler):
             height=height,
             clear=True,
             fg=(255, 255, 255),
-            bg=(0, 0, 0),
+            bg=(32, 20, 6),
         )
-        console.print(1, 1, f" {self.TITLE} ", fg=(0, 0, 0), bg=(255, 255, 255))
+
+        console.print(1, 1, f" {self.TITLE} ", fg=(201, 113, 30), bg=(32, 20, 6))
 
         if number_of_total_sockets > 0:
             previousSocket : Socket
@@ -286,15 +287,8 @@ class AttachmentEventHandler(AskUserEventHandler):
                     spacer = "  " * socketDepth
                     item_string = f"({socket_key}) {spacer} {socket.attachment.name} (E)"
 
-                console.print(1 + 1,1 + i + 1, item_string)
+                console.print(1 + 3, 3 + i + 1, item_string)
                 previousSocket = socket
-'''
-    Chassis
-    EMPTY
-    EMPTY
-    EMPTY
-    EMPTY should be tabbed in
-
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:
         player = self.engine.player
         key = event.sym
@@ -302,33 +296,23 @@ class AttachmentEventHandler(AskUserEventHandler):
 
         if 0 <= index <= 26:
             try:
-                selected_item = player.inventory.items[index]
-            except IndexError:
+                selected_item = player.attachments.get_sockets()[index]
+                pass
+            except:
                 self.engine.message_log.add_message("Invalid entry.", game.color.invalid)
                 return None
             return self.on_item_selected(selected_item)
         return super().ev_keydown(event)
-
-    def on_item_selected(self, item: game.entity.Item) -> Optional[ActionOrHandler]:
-        """Called when the user selects a valid item."""
-        raise NotImplementedError()
-'''
-
-'''E
-class AttachmentActivateHandler(InventoryEventHandler):
-    """Handle using an inventory item."""
-
-    TITLE = "Select an item to use"
-
-    def on_item_selected(self, item: game.entity.Item) -> Optional[ActionOrHandler]:
-        if item.consumable:
-            # Return the action for the selected item.
-            return item.consumable.get_action(self.engine.player)
-        elif item.equippable:
-            return game.actions.EquipAction(self.engine.player, item)
-        else:
-            return None
-'''
+    
+    from game.components.attachable import Attachable, Socket
+    def on_item_selected(self, socket: Socket) -> Optional[ActionOrHandler]:
+        if(not socket.attachment):
+            self.engine.message_log.add_message("Invalid entry.", game.color.invalid)
+            return
+        self.engine.player.inventory.items.append(socket.attachment)
+        socket.detach()
+        return
+    
 
 
 class InventoryEventHandler(AskUserEventHandler):
@@ -367,7 +351,7 @@ class InventoryEventHandler(AskUserEventHandler):
                 item_key = chr(ord("a") + i)
 
                 is_equipped = self.engine.player.equipment.item_is_equipped(item)
-
+                
                 item_string = f"({item_key}) {item.name} x {item.count}"
 
                 if is_equipped:
@@ -406,7 +390,11 @@ class InventoryActivateHandler(InventoryEventHandler):
             # Return the action for the selected item.
             return item.consumable.get_action(self.engine.player)
         elif item.equippable:
-            return game.actions.EquipAction(self.engine.player, item)
+            return game.actions.EquipAction(100, self.engine.player, item)
+        elif item.attachable:
+            self.engine.player.attachments.attach(item)
+            self.engine.player.inventory.items.remove(item)
+            return
         else:
             return None
 
