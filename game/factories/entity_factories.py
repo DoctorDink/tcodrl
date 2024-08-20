@@ -8,38 +8,6 @@ from game.components.attachments import Attachments
 import game.factories.limb_factories as limbs
 from game.entity import Actor, Item
 
-player = Actor(
-    char="@",
-    color=(50, 130, 33),
-    name="Player",
-    ai_cls=HostileEnemy,
-    equipment=Equipment(),
-    fighter=Fighter(Stats(100, 10, 10, 10)),
-    chassis=limbs.basic_chassis,
-    inventory=Inventory(capacity=26),
-)
-
-orc = Actor(
-    char="o",
-    color=(192, 40, 17),
-    name="Orc",
-    ai_cls=HostileEnemy,
-    equipment=Equipment(),
-    fighter=Fighter(Stats(10, 10, 10, 10)),
-    chassis=limbs.basic_chassis,
-    inventory=Inventory(capacity=0),
-)
-troll = Actor(
-    char="T",
-    color=(192, 40, 17),
-    name="Troll",
-    ai_cls=HostileEnemy,
-    equipment=Equipment(),
-    fighter=Fighter(Stats(25, 20, 3, 3)),
-    chassis=limbs.basic_chassis,
-    inventory=Inventory(capacity=0),
-)
-
 confusion_scroll = Item(
     char="~",
     color=(207, 63, 255),

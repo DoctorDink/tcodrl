@@ -9,6 +9,7 @@ import game.engine
 import game.entity
 import game.factories.entity_factories
 import game.factories.limb_factories
+import game.factories.unit_factories
 import game.game_map
 import game.tiles
 
@@ -31,10 +32,10 @@ item_chances: Dict[int, List[Tuple[game.entity.Entity, int]]] = {
 }
 
 enemy_chances: Dict[int, List[Tuple[game.entity.Entity, int]]] = {
-    0: [(game.factories.entity_factories.orc, 80)],
-    3: [(game.factories.entity_factories.troll, 15)],
-    5: [(game.factories.entity_factories.troll, 30)],
-    7: [(game.factories.entity_factories.troll, 60)],
+    0: [(game.factories.unit_factories.rust_ghoul, 80)],
+    3: [(game.factories.unit_factories.rust_ghoul, 15)],
+    5: [(game.factories.unit_factories.rust_ghoul, 30)],
+    7: [(game.factories.unit_factories.rust_ghoul, 60)],
 }
 
 

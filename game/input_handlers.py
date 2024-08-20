@@ -267,9 +267,8 @@ class AttachmentEventHandler(AskUserEventHandler):
             socketDepth = 0
             for i, socket in enumerate(self.engine.player.attachments.get_sockets()):
                 socket_key = chr(ord("a") + i)
-                #is_equipped = self.engine.player.equipment.item_is_equipped(item)
 
-                #If parent same as previous, same tab level, if different parent
+                #If parent same as previous, same tab level
                 #if current parent == last Socket, Tab further
                 #ELSE, one less tab
 
@@ -283,9 +282,12 @@ class AttachmentEventHandler(AskUserEventHandler):
 
                 if (socket.attachment == None):
                     item_string = f"({socket_key}) Empty Socket"
-                else: 
-                    item_string = f"({socket_key}) {socket.attachment.name} (E)"
+                else:
+                    spacer = "  " * socketDepth
+                    item_string = f"({socket_key}) {spacer} {socket.attachment.name} (E)"
+
                 console.print(1 + 1,1 + i + 1, item_string)
+                previousSocket = socket
 '''
     Chassis
     EMPTY

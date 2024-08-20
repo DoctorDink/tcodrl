@@ -102,7 +102,6 @@ class Actor(Entity):
         ai_cls: Type[game.components.ai.BaseAI],
         cooldown: int = 0,
         equipment: game.components.equipment.Equipment,
-        chassis: Item,
         fighter: game.components.fighter.Fighter,
         inventory: game.components.inventory.Inventory,
     ):
@@ -128,7 +127,6 @@ class Actor(Entity):
 
         self.attachments: game.components.attachments.Attachments = game.components.attachments.Attachments()
         self.attachments.parent = self
-        self.attachments.attach(0, chassis)
 
         self.inventory = inventory
         self.inventory.parent = self
