@@ -284,7 +284,7 @@ class AttachmentEventHandler(AskUserEventHandler):
                 if (socket.attachment == None):
                     item_string = f"({socket_key}) Empty Socket"
                 else: 
-                    item_string = f"({socket_key}) {"   "* socketDepth}{socket.attachment.name} (E)"
+                    item_string = f"({socket_key}) {socket.attachment.name} (E)"
                 console.print(1 + 1,1 + i + 1, item_string)
 '''
     Chassis

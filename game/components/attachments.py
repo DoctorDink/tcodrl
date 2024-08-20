@@ -13,6 +13,7 @@ class Attachments(game.components.base_component.BaseComponent):
 
     def __init__(self):
         self.chassis_socket = game.components.attachable.Socket(game.attachment_types.AttachmentType.CHASSIS)
+        self.chassis_socket.parent = self
 
     def get_sockets(self) -> list[game.components.attachable.Socket]:
         #DFS

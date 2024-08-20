@@ -1,7 +1,9 @@
-
 from __future__ import annotations
 
-from typing import Optional
+from typing import Optional, Union, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from game.components.attachments import Attachments
 
 import game.components.base_component as base_component
 import game.attachment_types  as attachment_types
@@ -10,8 +12,9 @@ import game.entity
 import game.exceptions
 import game.components.effect
 
+
 class Socket(base_component.BaseComponent):
-    parent: Attachable 
+    parent: Union[Attachable, Attachments] 
 
     def __init__(self, type: attachment_types.AttachmentType, attachment: Optional[game.entity.Item] = None) -> None:
         self.type = type
