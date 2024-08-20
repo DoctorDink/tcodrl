@@ -1,14 +1,19 @@
+from typing import Optional, Union
+
 from game.entity import Actor, Item
+from game.actions import Action
 from game.components.attachable import Attachable, Socket
 from game.attachment_types import AttachmentType
 from game.components.effect import Effect
 from game.stat_types import StatType
 
 
+basic_stat_callable = lambda bulk, shielding, processing, coordination: lambda action : {StatType.BULK: bulk, StatType.SHIELDING: shielding, StatType.PROCESSING: processing, StatType.COORDINATION: coordination}
+
 basic_chassis_effect = Effect(
     name = "ATTACHMENT:Basic Chassis",
     description="",
-    effect = lambda action: {StatType.BULK: 5, StatType.SHIELDING: 5},
+    effect = basic_stat_callable(5,5,5,5),
     stacks = 1,
     stackable = True,
 )
