@@ -8,7 +8,7 @@ import tcod
 import game.engine
 import game.entity
 import game.factories.entity_factories
-import game.factories.limb_factories
+from game.factories.limb_factories import *
 import game.factories.unit_factories
 import game.game_map
 import game.tiles
@@ -25,17 +25,19 @@ max_monsters_by_floor = [
 ]
 
 item_chances: Dict[int, List[Tuple[game.entity.Entity, int]]] = {
-    0: [(game.factories.entity_factories.health_potion, 35), (game.factories.limb_factories.basic_chassis, 5)],
-    2: [(game.factories.entity_factories.confusion_scroll, 10)],
-    4: [(game.factories.entity_factories.lightning_scroll, 25), (game.factories.entity_factories.sword, 5)],
-    6: [(game.factories.entity_factories.fireball_scroll, 25), (game.factories.entity_factories.chain_mail, 15)],
+    0: [(game.factories.entity_factories.health_potion, 35), (rusted_chassis, 5), (rusted_arm, 5), (rusted_foot, 5), (rusted_leg, 5), (rusted_hand, 5)],
+    1: [(basic_chassis, 5), (basic_arm, 5), (basic_hand, 5), (basic_leg, 5), (basic_foot, 5), 
+            (rusted_chassis, 2), (rusted_arm, 2), (rusted_foot, 2), (rusted_leg, 2), (rusted_hand, 2)],
+    3: [(golden_chassis, 5), (golden_arm, 5), (golden_hand, 5), (golden_leg, 5), (golden_foot, 5),
+            (basic_chassis, 3), (basic_arm, 3), (basic_hand, 3), (basic_leg, 3), (basic_foot, 3),
+            (rusted_chassis, 1), (rusted_arm, 1), (rusted_foot, 1), (rusted_leg, 1), (rusted_hand, 1)],
 }
 
 enemy_chances: Dict[int, List[Tuple[game.entity.Entity, int]]] = {
-    0: [(game.factories.unit_factories.rust_ghoul, 80)],
-    3: [(game.factories.unit_factories.rust_ghoul, 15)],
-    5: [(game.factories.unit_factories.rust_ghoul, 30)],
-    7: [(game.factories.unit_factories.rust_ghoul, 60)],
+    0: [(game.factories.unit_factories.rust_ghoul, 40)],
+    3: [(game.factories.unit_factories.rust_ghoul, 40)],
+    5: [(game.factories.unit_factories.rust_ghoul, 40)],
+    7: [(game.factories.unit_factories.rust_ghoul, 40)],
 }
 
 
