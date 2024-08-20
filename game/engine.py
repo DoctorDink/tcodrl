@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import lzma
-import pickle
+import dill as pickle
 
 import tcod
 
