@@ -8,12 +8,12 @@ from game.components.effect import Effect
 from game.stat_types import StatType
 
 
-basic_stat_callable = lambda bulk, shielding, processing, coordination: lambda action : {StatType.BULK: bulk, StatType.SHIELDING: shielding, StatType.PROCESSING: processing, StatType.COORDINATION: coordination}
+basic_stat_callable = lambda bulk=0, shielding=0, processing=0, coordination=0: lambda action : {StatType.BULK: bulk, StatType.SHIELDING: shielding, StatType.PROCESSING: processing, StatType.COORDINATION: coordination}
 
 basic_chassis_effect = Effect(
     name = "ATTACHMENT:Basic Chassis",
     description="",
-    effect = basic_stat_callable(5,5,5,5),
+    effect = basic_stat_callable(bulk=5, shielding=5),
     stacks = 1,
     stackable = True,
 )
