@@ -29,28 +29,26 @@ class Attachments(game.components.base_component.BaseComponent):
 
         return sockets
 
-    def attach(self, socket_index: int, attachment: game.entity.Item) -> None:
-        sockets = self.get_sockets()
-        sockets[socket_index].attach(attachment) #can raise impossible exception
 
-        for effect in self.get_all_attachment_effects():
-            self.parent.effect_handler.add_effect(effect)
 
-    def attach(self, attachment: game.entity.Item) -> None:
-        sockets = self.get_sockets()
-        print("---------")
-        for socket in sockets:
-            if (socket.attachment):
-                print (socket.attachment.name)
-            else: 
-                print ("EMPTY")
-            if not socket.attachment:
-                socket.attach(attachment)
-                for effect in self.get_all_attachment_effects():
-                    self.parent.effect_handler.add_effect(effect)
-                return
-            
-        raise game.exceptions.Impossible(f"No free slot to equip {attachment.name}")
+    def attach(self, attachment: game.entity.Item, socket_index = -1) -> None:
+        if socket_index == -1:
+            sockets = self.get_sockets()
+            for socket in sockets:
+                if not socket.attachment:
+                    socket.attach(attachment)
+                    for effect in self.get_all_attachment_effects():
+                        self.parent.effect_handler.add_effect(effect)
+                    return
+                
+            raise game.exceptions.Impossible(f"No free slot to equip {attachment.name}")
+        
+        else:
+            sockets = self.get_sockets()
+            sockets[socket_index].attach(attachment) #can raise impossible exception
+
+            for effect in self.get_all_attachment_effects():
+                self.parent.effect_handler.add_effect(effect)
 
     def get_all_attachment_effects(self) -> list[game.components.effect.Effect]:
         return self.chassis_socket.get_all_effects()
