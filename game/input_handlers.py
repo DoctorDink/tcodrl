@@ -356,9 +356,15 @@ class AttachmentSelectionEventHandler(AskUserEventHandler):
 
         super().on_render(console)
 
+        self.parent.on_render(console)
+        console.tiles_rgb["fg"] //= 8
+        console.tiles_rgb["bg"] //= 8
+
         player = self.engine.player
 
-        available_attachments = list(filter(lambda item : item.attachable != None, player.inventory.items))
+        all_sockets = player.attachments.get_sockets()
+
+        available_attachments = list(filter(lambda item : item.attachable != None and item.attachable.type == all_sockets[self.socket_index].type, player.inventory.items))
 
         height = self.MIN_WINDOW_HEIGHT + max(1, len(available_attachments))
 
@@ -398,7 +404,8 @@ class AttachmentSelectionEventHandler(AskUserEventHandler):
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:
         player = self.engine.player
         key = event.sym
-        available_attachments = list(filter(lambda item : item.attachable != None, player.inventory.items))
+        all_sockets = player.attachments.get_sockets()
+        available_attachments = list(filter(lambda item : item.attachable != None and item.attachable.type == all_sockets[self.socket_index].type, player.inventory.items))
         
         if key == tcod.event.KeySym.KP_2:
             self.selected_index += 1
