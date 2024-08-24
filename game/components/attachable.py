@@ -5,6 +5,7 @@ from typing import Optional, Union, TYPE_CHECKING
 if TYPE_CHECKING:
     from game.components.attachments import Attachments
 
+import game.components.attachments
 import game.components.base_component as base_component
 import game.attachment_types  as attachment_types
 import game.components.effect as effect
@@ -47,6 +48,24 @@ class Socket(base_component.BaseComponent):
             all_effects = socket.get_all_effects(all_effects)
 
         return all_effects
+    
+    def is_decendent_of(self, other: Socket):
+        #if the other given Socket is the core attachments socket,
+        #this socket is definitely a decendent of it.
+        if type(other.parent) is game.components.attachments.Attachments:
+            return True
+        
+        if not other.attachment:
+            return False
+        
+        assert(type(other.parent) is Attachable)
+        
+        for socket in other.attachment.attachable.sockets:
+            if socket == self:
+                return True
+            else:
+                return self.is_decendent_of(socket)
+            
 
 
 class Attachable(game.components.base_component.BaseComponent):

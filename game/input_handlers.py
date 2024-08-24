@@ -15,6 +15,8 @@ import game.color
 import game.engine
 import game.entity
 import game.exceptions
+import game.attachment_types
+import game.components.attachments
 
 MOVE_KEYS = {
     # Arrow keys.
@@ -239,9 +241,8 @@ class AttachmentEventHandler(AskUserEventHandler):
     def on_render(self, console: tcod.console.Console) -> None:
         from game.components.attachable import Attachable, Socket
 
-        """Render an inventory menu, which displays the items in the inventory, and the letter to select them.
-        Will move to a different position based on where the player is located, so the player can always see where
-        they are.
+        """
+        Render an attachment menu, which displays the attacments the player has equipped, and the letter to select them.
         """
         super().on_render(console)
         number_of_total_sockets = len(self.engine.player.attachments.get_sockets())
@@ -263,32 +264,33 @@ class AttachmentEventHandler(AskUserEventHandler):
         console.print(1, 1, f" {self.TITLE} ", fg=(201, 113, 30), bg=(32, 20, 6))
 
         if number_of_total_sockets > 0:
-            previousSocket : Socket
-            previousSocket = self.engine.player.attachments.get_sockets()[0]
-            socketDepth = 0
+            previous_socket : Socket = None
+            socket_depth = 0
             for i, socket in enumerate(self.engine.player.attachments.get_sockets()):
                 socket_key = chr(ord("a") + i)
 
-                #If parent same as previous, same tab level
-                #if current parent == last Socket, Tab further
-                #ELSE, one less tab
-
-                if(socket.parent == previousSocket.parent):
-                    #socket depth the same
+                if previous_socket == None or previous_socket.parent == socket.parent:
                     pass
-                elif(socket.parent == previousSocket.attachment):
-                    socketDepth += 1
-                else:
-                    socketDepth -= 1
+                elif socket.is_decendent_of(previous_socket):
+                    socket_depth += 1
+                else: 
+                    socket_depth -= 1
+
+
+                spacer = " " * socket_depth
+                if socket_depth > 0:
+                    spacer += "∟"
 
                 if (socket.attachment == None):
-                    item_string = f"({socket_key}) Empty Socket"
+                    item_string = f"({socket_key}) {spacer}Empty Socket"
                 else:
-                    spacer = "  " * socketDepth
-                    item_string = f"({socket_key}) {spacer} {socket.attachment.name} (E)"
-
+                    item_string = f"({socket_key}) {spacer}{socket.attachment.name}"
+                
+                #TODO: un-magic-numberify this 
+                previous_socket = socket
                 console.print(1 + 3, 3 + i + 1, item_string)
-                previousSocket = socket
+                
+
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:
         player = self.engine.player
         key = event.sym
