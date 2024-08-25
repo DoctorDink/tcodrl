@@ -34,7 +34,6 @@ def create_unit(parts: list[Item], char, color, name, ai, equipment, fighter, in
     unit = Actor(char=char, color=color, name=name, ai_cls=ai, equipment=equipment, fighter=fighter, inventory=inventory)
     for part in parts:
         unit.attachments.attach(copy.deepcopy(part))
-        print(f"attached {part.name}")
     return unit
     
 

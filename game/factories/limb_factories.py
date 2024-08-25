@@ -225,7 +225,7 @@ golden_leg_effect = Effect(
 golden_leg = Item(
     char="L",
     color=yellow,
-    name="Basic Leg",
+    name="Golden Leg",
     attachable=Attachable(AttachmentType.JOINT, hp = 20, max_hp = 20, sockets = [Socket(AttachmentType.APPENDAGE)], effects=[golden_leg_effect]),
     count=1,
     stackable=False,
@@ -242,7 +242,7 @@ golden_arm_effect = Effect(
 golden_arm = Item(
     char="|",
     color=yellow,
-    name="Basic Arm",
+    name="Golden Arm",
     attachable=Attachable(AttachmentType.JOINT, hp =20, max_hp = 20, sockets = [Socket(AttachmentType.APPENDAGE)], effects=[golden_arm_effect]),
     count=1,
     stackable=False,
@@ -250,7 +250,7 @@ golden_arm = Item(
 
 
 golden_hand_effect = Effect(
-    name = "ATTACHMENT:Basic Hand",
+    name = "ATTACHMENT:Golden Hand",
     description="",
     effect = basic_stat_callable(bulk= 4, shielding= 4),
     stacks = 1,
@@ -260,14 +260,14 @@ golden_hand_effect = Effect(
 golden_hand = Item(
     char="W",
     color=yellow,
-    name="Basic Hand",
-    attachable=Attachable(AttachmentType.APPENDAGE, hp = 20, max_hp = 120, sockets = [], effects=[golden_hand_effect]),
+    name="Golden Hand",
+    attachable=Attachable(AttachmentType.APPENDAGE, hp = 20, max_hp = 20, sockets = [], effects=[golden_hand_effect]),
     count=1,
     stackable=False,
 )
 
 golden_foot_effect = Effect(
-    name = "ATTACHMENT:Basic Foot",
+    name = "ATTACHMENT:Golden Foot",
     description="",
     effect = basic_stat_callable(bulk= 4, shielding= 4),
     stacks = 1,
@@ -277,8 +277,8 @@ golden_foot_effect = Effect(
 golden_foot = Item(
     char="M",
     color=yellow,
-    name="Basic Foot",
-    attachable=Attachable(AttachmentType.APPENDAGE, hp = 20, max_hp = 20, sockets = [], effects=[basic_foot_effect]),
+    name="Golden Foot",
+    attachable=Attachable(AttachmentType.APPENDAGE, hp = 20, max_hp = 20, sockets = [], effects=[golden_foot_effect]),
     count=1,
     stackable=False,
 )

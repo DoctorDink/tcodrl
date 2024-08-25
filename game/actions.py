@@ -195,15 +195,12 @@ class Move(ActionWithDirection):
 
         if not self.engine.game_map.in_bounds(dest_x, dest_y):
             # Destination is out of bounds.
-            print("I'm trying to move out of bounds")
             raise game.exceptions.Impossible("That way is blocked.")
         if not self.engine.game_map.tiles["walkable"][dest_x, dest_y]:
             # Destination is blocked by a tile.
-            print("This place is blocked by a wall?")
             raise game.exceptions.Impossible("That way is blocked.")
         if self.engine.game_map.get_blocking_entity_at_location(dest_x, dest_y):
             # Destination is blocked by an entity.
-            print("This place is blocked by an entity")
             if self.entity.name == "Orc":
                 self.entity.cooldown = 150 
             else:

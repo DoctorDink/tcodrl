@@ -304,9 +304,8 @@ class AttachmentEventHandler(AskUserEventHandler):
                 
 
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:
-        player = self.engine.player
         key = event.sym
-
+        
         socket_count = len(self.engine.player.attachments.get_sockets())
         
         if key == tcod.event.KeySym.KP_2:
@@ -318,7 +317,7 @@ class AttachmentEventHandler(AskUserEventHandler):
             self.selected_index -= 1
             if self.selected_index < 0:
                 self.selected_index = 0
-            return
+            return 
         elif key in {
             tcod.event.KeySym.SPACE,
             tcod.event.KeySym.KP_ENTER,
@@ -357,8 +356,8 @@ class AttachmentSelectionEventHandler(AskUserEventHandler):
         super().on_render(console)
 
         self.parent.on_render(console)
-        console.tiles_rgb["fg"] //= 8
-        console.tiles_rgb["bg"] //= 8
+        console.rgb["fg"] //= 2
+        console.rgb["bg"] //= 2
 
         player = self.engine.player
 
@@ -374,8 +373,6 @@ class AttachmentSelectionEventHandler(AskUserEventHandler):
 
         left = console.width // 2 - self.WINDOW_WIDTH // 2
 
-        print(f"Height: {height}, Top: {top}, Left: {left}")
-
         console.draw_frame(
             x=left,
             y=top,
@@ -386,7 +383,7 @@ class AttachmentSelectionEventHandler(AskUserEventHandler):
             bg=color.dark_brown,
         )
 
-        console.print(left, top - 1, f" {self.TITLE} ", fg=color.pale_sand, bg=color.dark_brown)
+        console.print(left, top - 1, f" {self.TITLE} ", fg=color.pale_sand, bg=tuple(ti//2 for ti in color.dark_brown))
 
         if len(available_attachments) > 0:
             for i, attachment in enumerate(available_attachments):
