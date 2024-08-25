@@ -48,6 +48,7 @@ def main() -> None:
                     # Then print the error to the message log.
                     if isinstance(handler, game.input_handlers.EventHandler):
                         handler.engine.message_log.add_message(traceback.format_exc(), game.color.error)
+                        
         except game.exceptions.QuitWithoutSaving:
             raise
         except SystemExit:  # Save and quit.
