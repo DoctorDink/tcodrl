@@ -14,6 +14,8 @@ if TYPE_CHECKING:
 
 class BaseAI(game.actions.Action, base_component.BaseComponent):
     isHostile = 0 # Enemies are set to hostile when they are revealed on the map, potentially update to A* pathfinding for LOS.
+    can_shoot = 0
+    range = 0
     def perform(self) -> None:
         raise NotImplementedError()
 
@@ -49,7 +51,7 @@ class BaseAI(game.actions.Action, base_component.BaseComponent):
 
 
 class HostileEnemy(BaseAI):
-    def __init__(self, entity: Actor):
+    def __init__(self, entity: Actor, can_shoot = False, range=0):
         super().__init__(entity)
         self.path: List[Tuple[int, int]] = []
 
@@ -63,6 +65,8 @@ class HostileEnemy(BaseAI):
             self.isHostile = 1
             if distance <= 1:
                 return game.actions.MeleeAction(100, self.entity, dx, dy).perform()
+            elif 1 < distance <= self.range:
+                return game.actions.RangedAction(100, self.entity, dx, dy).perform()
 
             self.path = self.get_path_to(target.x, target.y)
 

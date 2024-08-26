@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import copy
-
+from game.color import *
 from game.factories.limb_factories import *
 from game.components.ai import HostileEnemy
 from game.components.equipment import Equipment
@@ -34,6 +34,10 @@ def create_unit(parts: list[Item], char, color, name, ai, equipment, fighter, in
     unit = Actor(char=char, color=color, name=name, ai_cls=ai, equipment=equipment, fighter=fighter, inventory=inventory)
     for part in parts:
         unit.attachments.attach(copy.deepcopy(part))
+    if unit.char=="s":
+        unit.ai.can_shoot = 1
+        unit.ai.range = 3
+
     return unit
     
 
@@ -53,6 +57,17 @@ rust_ghoul = create_unit(
     char="g",
     color=(128, 42, 36),
     name="Rust Ghoul",
+    ai=HostileEnemy,
+    equipment=Equipment(),
+    fighter=Fighter(Stats(10, 10, 10, 10)),
+    inventory=Inventory(capacity=0),
+)
+
+oxide_soldier = create_unit(
+    parts=[rusted_chassis, rusted_arm, rusted_hand, rusted_leg, rusted_foot, rusted_leg, rusted_foot],
+    char="s",
+    color=oxide,
+    name="Oxide Soldier",
     ai=HostileEnemy,
     equipment=Equipment(),
     fighter=Fighter(Stats(10, 10, 10, 10)),

@@ -188,6 +188,28 @@ class MeleeAction(ActionWithDirection):
         
         self.action_performed(self.cooldown)
 
+class RangedAction(ActionWithDirection):
+    def perform(self) -> None:
+        target = self.target_actor
+        if not target:
+            raise game.exceptions.Impossible("Nothing to attack.")
+
+        damage = self.entity.fighter.stats.bulk // 5 - target.fighter.stats.shielding // 10
+
+        attack_desc = f"{self.entity.name.capitalize()} fires at {target.name}"
+        if self.entity is self.engine.player:
+            attack_color = game.color.player_atk
+        else:
+            attack_color = game.color.enemy_atk
+
+        if damage > 0:
+            self.engine.message_log.add_message(f"{attack_desc} for {damage} hit points.", attack_color)
+            target.fighter.hp -= damage
+        else:
+            self.engine.message_log.add_message(f"{attack_desc} but does no damage.", attack_color)
+        
+        self.action_performed(self.cooldown)        
+
 
 class Move(ActionWithDirection):
     def perform(self) -> None:
