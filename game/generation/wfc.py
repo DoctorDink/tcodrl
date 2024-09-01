@@ -106,13 +106,7 @@ class WFC_Ruleset(object):
         options: Weights = {}
 
         for rule in self.ruleset.keys():
-            flag = True
-            for i in range(len(rule)):
-                if not rule[i].issubset(observation[i]):
-                    flag = False
-                    break
-            
-            if flag:
+            if WFC_Ruleset.is_match(rule, observation):
                 weights = self.ruleset[rule]
                 for tile in weights.keys():
                     if tile in options:
@@ -122,6 +116,14 @@ class WFC_Ruleset(object):
 
         return options
     
+    @staticmethod
+    def is_match(observation_a: Observation, observation_b: Observation) -> bool:
+        assert(len(observation_a) == len(observation_b) == len(DIRECTIONS))
+        for i in range(len(observation_a)):
+            if not observation_a[i].issubset(observation_b[i]):
+                return False
+        return True
+
     @staticmethod
     def get_obs_str(observation: Observation) -> str:
         o_arr = [
@@ -301,14 +303,15 @@ class WFC_Tile(object):
         for direction in DIRECTIONS:
             dx, dy = direction
 
-            if x + dx < 0 or y + dy < 0 or x + dx >= width or y + dy >= height:
+            if x + dx < 0 or y - dy < 0 or x + dx >= width or y - dy >= height:
                 observation.append(frozenset({None}))
             else:
-                observation.append(frozenset(self.parent.board[y+dy][x+dx].weights))
+                observation.append(frozenset(self.parent.board[y-dy][x+dx].weights))
         
         observation = tuple(observation)
 
         options = self.parent.ruleset.get_options_from_observation(observation)
+
         for attempt in self.attempts:
             if attempt in options:
                 del options[attempt]
@@ -494,8 +497,8 @@ class WFC_Board(object):
 
 
 def main():
-    rules = WFC_Ruleset("data/Skyline.png")
-    board = WFC_Board(30,30,rules)
+    rules = WFC_Ruleset("data/Dungeon.png")
+    board = WFC_Board(20, 20, rules)
     board.build_board()
     image = board.get_image()
     image.save('test.png')
