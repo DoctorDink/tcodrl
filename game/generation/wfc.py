@@ -8,6 +8,7 @@ from PIL import Image
 from enum import Enum, auto
 from typing import Optional, Literal, Union, TYPE_CHECKING
 import math
+import copy
 import random
 
 
@@ -32,7 +33,8 @@ Coordinates = tuple[int,int]
 
 Weights = dict[Tile, int]
 
-Observation = tuple[Tile, Tile, Direction, int]
+Observation = tuple[frozenset[Tile], frozenset[Tile], frozenset[Tile], frozenset[Tile], frozenset[Tile], frozenset[Tile], frozenset[Tile], frozenset[Tile]]
+Ruleset = dict[Observation, Weights]
 
 UP = (0, 1)
 RIGHT = (1, 0)
@@ -54,20 +56,124 @@ DIRECTIONS = (
     TOPLEFT
 )
 
-class WFC_Ruleset(object):
-    def __init__(self) -> None:
-        pass
+def tupleify(ndarray):
+    """
+    temp function to turn nd array to tuple
+    """
+    r = ndarray[0]
+    g = ndarray[1]
+    b = ndarray[2]
 
-    def build_ruleset(training_image_path) -> None:
+    return (r, g, b)
+    
+
+class WFC_Ruleset(object):
+    def __init__(self, training_image_path, search_depth = 1) -> None:
+        self.build_ruleset(training_image_path, search_depth)
+
+    def build_ruleset(self, training_image_path, search_depth = 1) -> None:
         training_image = Image.open(training_image_path).convert('RGB')
         
 
         width, height = training_image.size
         pixel_array = np.asarray(training_image)
 
+        self.ruleset: Ruleset = {}
+        self.default_weights: Weights = {}
+
         #TODO: CHECK THE LOADING ORDER OF THE PIXELS
-        for row in pixel_array:
-            for pixel in row:
+        for y in range(height):
+            for x in range(width):
+                observation = WFC_Ruleset.get_observation(pixel_array, (x,y))
+                tile = tupleify(pixel_array[y][x])
+
+                #record tile frequency for default_weight:
+                if tile in self.default_weights:
+                    self.default_weights[tile] += 1
+                else:
+                    self.default_weights[tile] = 1
+
+                if observation in self.ruleset:
+                    weights = self.ruleset[observation]
+                    if tile in weights:
+                        weights[tile] = weights[tile] + 1
+                    else:
+                        weights[tile] = 1
+                else:
+                    self.ruleset[observation] = {tile: 1}
+    
+    def get_options_from_observation(self, observation: Observation) -> Weights:
+        options: Weights = {}
+
+        for rule in self.ruleset.keys():
+            flag = True
+            for i in range(len(rule)):
+                if not rule[i].issubset(observation[i]):
+                    flag = False
+                    break
+            
+            if flag:
+                weights = self.ruleset[rule]
+                for tile in weights.keys():
+                    if tile in options:
+                        options[tile] = options[tile] + weights[tile]
+                    else:
+                        options[tile] = weights[tile]
+
+        return options
+    
+    @staticmethod
+    def get_obs_str(observation: Observation) -> str:
+        o_arr = [
+            ["", "", ""],
+            ["", "", ""],
+            ["", "", ""],
+        ]
+        o_arr[1][1] = "#"
+
+        for i, dir in enumerate(DIRECTIONS):
+            x, y = dir
+            x += 1
+            y += 1
+            if observation[i] == frozenset({(np.uint8(0), np.uint8(0), np.uint8(0))}):
+                o_arr[y][x] = "B"
+            elif observation[i] == frozenset({(np.uint8(255), np.uint8(255), np.uint8(255))}):
+                o_arr[y][x] = "W"
+            else:
+                o_arr[y][x] = "?"
+
+        ostr = ""
+        for row  in o_arr:
+            for c in row:
+               ostr += c
+            ostr += "\n" 
+
+        return ostr
+
+    @staticmethod
+    def get_observation(pixel_array: np.ndarray, coords: Coordinates) -> Observation:
+        x, y = coords
+
+        height = len(pixel_array)
+        width = len(pixel_array[0])
+
+        observation = []
+
+        for direction in DIRECTIONS:
+            dx, dy = direction
+
+            if x + dx < 0 or y - dy < 0 or x + dx >= width or y - dy >= height:
+                observation.append(frozenset({None}))
+            else:
+                observation.append(frozenset({tupleify(pixel_array[y-dy][x+dx])}))
+        
+        return tuple(observation)
+    
+    
+
+
+                
+
                 
 
 
@@ -79,34 +185,101 @@ class WFC_Tile(object):
     """
 
     def __init__(self, parent: WFC_Board, coords: Coordinates, weights: Weights) -> None:
-        self.parent = parent
-        self.coords = coords
-        self.weights = weights
+        self.parent: WFC_Board = parent
+        self.coords: Coordinates = coords
+        self.weights: Weights = weights
         self.collapsed = False
+        self.previous_state = weights
+        self.new = False
+        self.attempts = []
 
     
     @property
     def shannon_entropy(self):
+
+
         if self.collapsed:
             return 0
         
-        sum_of_weights = 0
-        sum_of_log_weights = 0
+        #return len(self.weights.keys()) / len(self.parent.ruleset.default_weights.keys())
 
-        for weight in Weights.values():
+
+        sum_of_weights = 0
+        sum_of_log_weights = 0 
+
+        #print(list(self.weights.values()))
+
+        for weight in self.weights.values():
             sum_of_weights += weight
             sum_of_log_weights += weight * math.log(weight)
         
         return math.log(sum_of_weights) - (sum_of_log_weights / sum_of_weights)
     
+    @property
+    def color(self):
+        if self.new:
+            self.new = False 
+            return (0,0,255)
+        
+        r = -1
+        g = -1
+        b = -1
+
+        assert(len(self.weights)>= 1)
+
+        sum_weights = sum(self.weights.values())
+
+        for tile in self.weights.keys():
+            tr, tg, tb = tile
+
+            tr *= (self.weights[tile] / sum_weights)
+            tg *= (self.weights[tile] / sum_weights)
+            tb *= (self.weights[tile] / sum_weights)
+
+            tr = int(tr)
+            tg = int(tg)
+            tb = int(tb)
+
+            if r == -1:
+                r = tr
+                g = tg
+                b = tb
+            else:
+                r += tr
+                g += tg
+                b += tb
+
+        return (r,g,b)
+
+
+    @property
+    def choice(self):
+        assert(self.collapsed)
+        return list(self.weights.keys())[0]
+    
     def collapse(self):
         self.collapsed = True
-        options = list(self.weights.keys())
-        weights = list(self.weights.values)
+        
+        self.previous_state = self.weights
 
+        options = list(self.weights.keys())
+        weights = list(self.weights.values())
         choice = random.choices(options, weights, k=1)[0]
 
-        self.weights: dict[Tile, int] = {choice, 100}
+        self.attempts.append(choice)
+
+        self.weights: dict[Tile, int] = {choice: 100}
+
+        self.new = True
+    
+    def uncollapse(self):
+        self.collapsed = False
+        self.weights = self.previous_state
+
+    def reset(self):
+        self.collapsed =  False
+        self.attempts = []
+        self.weights = self.previous_state
 
     def get_tile_type(self):
         assert(self.collapsed)
@@ -115,7 +288,37 @@ class WFC_Tile(object):
         return options[0]
     
     def get_options(self) -> Weights:
-        pass
+        if self.collapsed:
+            return self.weights
+
+        x, y = self.coords
+
+        width = self.parent.width
+        height = self.parent.height
+
+        observation = []
+
+        for direction in DIRECTIONS:
+            dx, dy = direction
+
+            if x + dx < 0 or y + dy < 0 or x + dx >= width or y + dy >= height:
+                observation.append(frozenset({None}))
+            else:
+                observation.append(frozenset(self.parent.board[y+dy][x+dx].weights))
+        
+        observation = tuple(observation)
+
+        options = self.parent.ruleset.get_options_from_observation(observation)
+        for attempt in self.attempts:
+            if attempt in options:
+                del options[attempt]
+
+        return options
+
+
+
+
+        
 
 class WFC_Board(object):
 
@@ -125,18 +328,39 @@ class WFC_Board(object):
     TODO: probably not an intuitive coordinate system, could be fixed
     """
 
-    def __init__(self, width, height) -> None:
+    def __init__(self, width, height, ruleset: WFC_Ruleset) -> None:
         self.width = width
         self.height = height
-        self.board: list[list[Tile]] = []
+        self.board: list[list[WFC_Tile]] = []
+        self.ruleset: WFC_Ruleset = ruleset
+        
+        self.reset_board()
+        
+    def reset_board(self):
+        self.board: list[list[WFC_Tile]] = []
 
-        for y in range(height):
+        for y in range(self.height):
             new_row = []
-            for x in range(width):
-                new_row.append(WFC_Tile(self, (x, y)))
+            for x in range(self.width):
+                observation = []
+
+                for direction in DIRECTIONS:
+                    dx, dy = direction
+
+                    if x + dx < 0 or y + dy < 0 or x + dx >= self.width or y + dy >= self.height:
+                        observation.append(frozenset({None}))
+                    else:
+                        observation.append(frozenset(self.ruleset.default_weights.keys()))
+                
+                observation = tuple(observation)
+
+                weights = self.ruleset.get_options_from_observation(observation)
+
+                new_row.append(WFC_Tile(self, (x, y), weights))
+
             self.board.insert(0, new_row)
 
-    def valid_directions(self, coords: Coordinates) -> list[Direction]:
+    def get_valid_directions(self, coords: Coordinates) -> list[Direction]:
         x, y = coords
         
         valid_directions = []
@@ -150,15 +374,21 @@ class WFC_Board(object):
                 continue
 
             valid_directions.append(direction)
+
+        return valid_directions
     
     @property
     def is_fully_collapsed(self) -> bool:
         for row in self.board:
             for tile in row:
                 assert(isinstance(tile, WFC_Tile))
-                if tile.shannon_entropy > 0:
+                if not tile.collapsed:
                     return False
         return True
+    
+    def get_tile_at(self, coords: Coordinates):
+        x, y = coords
+        return self.board[y][x]
 
     def get_min_entropy_tile(self):
         assert(not self.is_fully_collapsed) #If the board is fully collapsed, we dont have a min entropy tile
@@ -169,7 +399,7 @@ class WFC_Board(object):
                 assert(isinstance(tile, WFC_Tile))
 
                 #We don't want to return a tile that is already collapsed! (shannon_entropy = 0 when collapsed)
-                if tile.shannon_entropy == 0:
+                if tile.collapsed:
                     continue
                 if tile.shannon_entropy < min_entropy:
                     min_entropy = tile.shannon_entropy
@@ -179,27 +409,102 @@ class WFC_Board(object):
 
         return min_entropy_tile
 
+    def build_board(self):
+        images = []
+        board_states = []
+        while not self.is_fully_collapsed:
+            images.append(self.get_image())
+            #board_states.append(copy.deepcopy(self.board))
+            self.iterate()
+
+
+                
+            
+
+        images.append(self.get_image())
+
+        self.make_gif(images)
 
 
 
-    def iterate(self) -> None:
-        next_tile: WFC_Tile = self.get_min_entropy_tile
+    def iterate(self):
+        next_tile: WFC_Tile = self.get_min_entropy_tile()
         next_tile.collapse()
         self.propagate(next_tile)
 
-    def propagate(self, tile: WFC_Tile) -> None:
+    def propagate(self, tile: WFC_Tile) :
 
         propagation_stack = [tile]
 
         while len(propagation_stack) > 0:
             current_tile = propagation_stack.pop()
+            x, y = current_tile.coords
+            for direction in self.get_valid_directions(current_tile.coords):
+                dx, dy = direction
 
-            possible_tiles = tile.get_options()
+                other_tile: WFC_Tile = self.get_tile_at((x + dx, y + dy))
+
+                if other_tile.collapsed:
+                    continue
+
+                other_options = other_tile.get_options()
+                other_weights = other_tile.weights
+
+                if len(other_options.keys()) == 0:
+                    return False
+                
+                #if set(other_options.keys()) != set(other_weights.keys()):
+                if other_options != other_weights:
+                    propagation_stack.append(other_tile)
+
+                other_tile.weights = other_options
+
+                
+
+        return True
+
+    def get_image(self) -> Image.Image:
+        pixels = []
+        for row in self.board:
+            r = []
+            for pixel in row:
+                r.append(pixel.color)
+                    
+            pixels.append(r)
+        
+        array = np.array(pixels, dtype=np.uint8)
+
+        new_image = Image.fromarray(array)
+
+        return new_image
+    
+
+    def make_gif(self, frames):
+        new_frames = []
+        for image in frames:
+            assert(isinstance(image,Image.Image))
+            new_frames.append(image.resize((300, 300), Image.Resampling.NEAREST))
+        frame_one = new_frames[0]
+        frame_one.save("test.gif", format="GIF", append_images=new_frames,
+                save_all=True, duration=1, loop=0)
 
 
 
 
 
+
+def main():
+    rules = WFC_Ruleset("data/Skyline.png")
+    board = WFC_Board(30,30,rules)
+    board.build_board()
+    image = board.get_image()
+    image.save('test.png')
+    
+
+
+
+if __name__ == "__main__":
+    main()
 
 # def totuple(a):
 #     try:
