@@ -354,7 +354,7 @@ class WFC_Board(object):
 
 
 def main():
-    test = WFC_Board((20,20), "data/Qud.png")
+    test = WFC_Board((10,10), "data/coast.png")
     test.build_board()
     test.save_image()
 
