@@ -30,7 +30,7 @@ TopRight = tuple[Literal[1], Literal[1]]
 BottomRight = tuple[Literal[1], Literal[-1]]
 TopLeft = tuple[Literal[-1], Literal[1]]
 BottomLeft = tuple[Literal[-1], Literal[-1]]
-Direction = Center | Up | Down | Left | Right | TopRight | TopLeft | BottomRight | BottomLeft
+Direction = TopLeft | Up | TopRight | Left | Center | Right | BottomLeft | Down | BottomRight
 
 Coordinates = tuple[int,int]
 Size = tuple[int, int]
@@ -50,15 +50,15 @@ BOTTOMLEFT = (-1, -1)
 TOPLEFT = (-1, 1)
 
 DIRECTIONS = (
-    CENTER,
+    TOPLEFT,
     UP,
-    RIGHT,
-    DOWN,
-    LEFT,
     TOPRIGHT,
-    BOTTOMRIGHT,
+    LEFT,
+    CENTER,
+    RIGHT,
     BOTTOMLEFT,
-    TOPLEFT
+    DOWN,
+    BOTTOMRIGHT
 )
 
 def reverse_direction(direction: Direction) -> Direction:
@@ -157,7 +157,7 @@ class WFC_Board(object):
             for pattern, count in zip(tile.keys(), tile.values()):
                 if count > 0:
                     #TODO: Right now, I have the center (the possible collapse options) at pattern[0]. This is subject to change and this should not be hardcoded like this
-                    options.add(pattern[0])
+                    options.add(pattern[4])
 
             return options
 
@@ -166,7 +166,6 @@ class WFC_Board(object):
         x, y = coords
         
         #assert(len(self.get_options(coords)) > 0)
-
         if len(self.get_options(coords)) == 1:
             return 0
 
@@ -247,7 +246,7 @@ class WFC_Board(object):
                 if self.shannon_entropy(other_coords) == 0:
                     continue
 
-                other_tile_needs_refresh = self.constrain(other_coords, reverse_direction(direction), current_possible_tiles)
+                other_tile_needs_refresh = self.constrain(current_coords, direction, current_possible_tiles)
 
                 if other_tile_needs_refresh:
                     stack.append(other_coords)
@@ -290,6 +289,22 @@ class WFC_Board(object):
 
         return flag
         
+    def get_overlap_offsets(self, coords1: Coordinates, coords2: Coordinates, radius: int):
+        if radius != 1:
+            raise NotImplementedError
+        
+        x1, y1 = coords1
+        x2, y2 = coords2
+
+        region1_coords = list((x1 + dx, y1 + dy) for dx, dy in DIRECTIONS)
+        region2_coords = list((x2 + dx, y2 + dy) for dx, dy in DIRECTIONS)
+
+        overlap_coords = list(set(region1_coords) & set(region2_coords))
+        
+        coord1_overlap_offsets = list((x - x1, y - y1) for x, y in overlap_coords)
+        coord2_overlap_offsets = list((x - x2, y - y2) for x, y in overlap_coords)
+
+        return (coord1_overlap_offsets, coord2_overlap_offsets)
 
 
     def build_patterns(self, input_image_path: str) -> None:
@@ -326,7 +341,7 @@ class WFC_Board(object):
         for row in self.board:
             r = []
             for pixel in row:
-                r.append(self.int_to_color[list(pixel.keys())[0][0]])
+                r.append(self.int_to_color[list(pixel.keys())[0][4]])
                     
             pixels.append(r)
         
@@ -345,6 +360,14 @@ class WFC_Board(object):
         frame_one = new_frames[0]
         frame_one.save("test.gif", format="GIF", append_images=new_frames,
                 save_all=True, duration=1, loop=0)
+        
+    def print_patterns(self):
+        for pattern in self.patterns.keys():
+            print(f"Pattern appears {self.patterns[pattern]} times:")
+            for i in range(3):
+                print(pattern[(i*3):((i+1)*3)])
+
+
 
 
                  
@@ -354,7 +377,7 @@ class WFC_Board(object):
 
 
 def main():
-    test = WFC_Board((10,10), "data/coast.png")
+    test = WFC_Board((10,10), "data/qud.png")
     test.build_board()
     test.save_image()
 
